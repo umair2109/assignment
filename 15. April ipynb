@@ -1,779 +1,740 @@
-{
- "cells": [
-  {
-   "cell_type": "markdown",
-   "id": "fcb73fe3-9b31-4552-9dbe-ef8ce552b56f",
-   "metadata": {},
-   "source": [
-    "\n",
-    "Assignment 69: Ensemble Techniques 5 - Utkarsh Gaikwad\n",
-    "\n",
-    "Assignment pdf link\n",
-    "\n",
-    "Question 1\n",
-    "\n",
-    "Question 1 : You are working on machine learning project where you have containing numerical and categorical features. You have identified that some features are highly correlated and there are missing values in some of the columns. You want to build a pipeline that automates feature engineering process and handles missing values.\n",
-    "Design a Pipeline that includes following steps:\n",
-    "Use an automated method to identify important features of dataset\n",
-    "Use a numerical pipeline that includes following steps:\n",
-    "Impute missing values in numeric columns with mean\n",
-    "Scale the numerical columns using standardisation\n",
-    "Create a categorical pipeline that includes following steps:\n",
-    "Impute missing values in categorical columns with most frequent data\n",
-    "One Hot Encode the categorical columns\n",
-    "Combine the numerical and categorical pipelines using a ColumnTransformer\n",
-    "Use Random Forest Classifier to build final model\n",
-    "Evaluate accuracy of model on the test dataset\n",
-    "Note : Your Solution should include code snippets for each step of pipeline and a brief explaination of each step. You should also provide an interpretation of results and suggest possible improvements for pipeline\n",
-    "Answer :\n",
-    "Used Employee Attrition dataset for performing above tasks\n",
-    "Dataset link : https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset/\n",
-    "\n",
-    "Uncover the factors that lead to employee attrition and explore important questions such as ‘show me a breakdown of distance from home by job role and attrition’ or ‘compare average monthly income by education and attrition’.\n",
-    "\n",
-    "Read the dataset\n",
-    "import pandas as pd\n",
-    "df = pd.read_csv('Attrition.csv')\n",
-    "df.head()\n",
-    "Age\tAttrition\tBusinessTravel\tDailyRate\tDepartment\tDistanceFromHome\tEducation\tEducationField\tEmployeeCount\tEmployeeNumber\t...\tRelationshipSatisfaction\tStandardHours\tStockOptionLevel\tTotalWorkingYears\tTrainingTimesLastYear\tWorkLifeBalance\tYearsAtCompany\tYearsInCurrentRole\tYearsSinceLastPromotion\tYearsWithCurrManager\n",
-    "0\t41\tYes\tTravel_Rarely\t1102\tSales\t1\t2\tLife Sciences\t1\t1\t...\t1\t80\t0\t8\t0\t1\t6\t4\t0\t5\n",
-    "1\t49\tNo\tTravel_Frequently\t279\tResearch & Development\t8\t1\tLife Sciences\t1\t2\t...\t4\t80\t1\t10\t3\t3\t10\t7\t1\t7\n",
-    "2\t37\tYes\tTravel_Rarely\t1373\tResearch & Development\t2\t2\tOther\t1\t4\t...\t2\t80\t0\t7\t3\t3\t0\t0\t0\t0\n",
-    "3\t33\tNo\tTravel_Frequently\t1392\tResearch & Development\t3\t4\tLife Sciences\t1\t5\t...\t3\t80\t0\t8\t3\t3\t8\t7\t3\t0\n",
-    "4\t27\tNo\tTravel_Rarely\t591\tResearch & Development\t2\t1\tMedical\t1\t7\t...\t4\t80\t1\t6\t3\t3\t2\t2\t2\t2\n",
-    "5 rows × 35 columns\n",
-    "\n",
-    "df.shape\n",
-    "(1470, 35)\n",
-    "# Checking dataset info\n",
-    "df.info()\n",
-    "<class 'pandas.core.frame.DataFrame'>\n",
-    "RangeIndex: 1470 entries, 0 to 1469\n",
-    "Data columns (total 35 columns):\n",
-    " #   Column                    Non-Null Count  Dtype \n",
-    "---  ------                    --------------  ----- \n",
-    " 0   Age                       1470 non-null   int64 \n",
-    " 1   Attrition                 1470 non-null   object\n",
-    " 2   BusinessTravel            1470 non-null   object\n",
-    " 3   DailyRate                 1470 non-null   int64 \n",
-    " 4   Department                1470 non-null   object\n",
-    " 5   DistanceFromHome          1470 non-null   int64 \n",
-    " 6   Education                 1470 non-null   int64 \n",
-    " 7   EducationField            1470 non-null   object\n",
-    " 8   EmployeeCount             1470 non-null   int64 \n",
-    " 9   EmployeeNumber            1470 non-null   int64 \n",
-    " 10  EnvironmentSatisfaction   1470 non-null   int64 \n",
-    " 11  Gender                    1470 non-null   object\n",
-    " 12  HourlyRate                1470 non-null   int64 \n",
-    " 13  JobInvolvement            1470 non-null   int64 \n",
-    " 14  JobLevel                  1470 non-null   int64 \n",
-    " 15  JobRole                   1470 non-null   object\n",
-    " 16  JobSatisfaction           1470 non-null   int64 \n",
-    " 17  MaritalStatus             1470 non-null   object\n",
-    " 18  MonthlyIncome             1470 non-null   int64 \n",
-    " 19  MonthlyRate               1470 non-null   int64 \n",
-    " 20  NumCompaniesWorked        1470 non-null   int64 \n",
-    " 21  Over18                    1470 non-null   object\n",
-    " 22  OverTime                  1470 non-null   object\n",
-    " 23  PercentSalaryHike         1470 non-null   int64 \n",
-    " 24  PerformanceRating         1470 non-null   int64 \n",
-    " 25  RelationshipSatisfaction  1470 non-null   int64 \n",
-    " 26  StandardHours             1470 non-null   int64 \n",
-    " 27  StockOptionLevel          1470 non-null   int64 \n",
-    " 28  TotalWorkingYears         1470 non-null   int64 \n",
-    " 29  TrainingTimesLastYear     1470 non-null   int64 \n",
-    " 30  WorkLifeBalance           1470 non-null   int64 \n",
-    " 31  YearsAtCompany            1470 non-null   int64 \n",
-    " 32  YearsInCurrentRole        1470 non-null   int64 \n",
-    " 33  YearsSinceLastPromotion   1470 non-null   int64 \n",
-    " 34  YearsWithCurrManager      1470 non-null   int64 \n",
-    "dtypes: int64(26), object(9)\n",
-    "memory usage: 402.1+ KB\n",
-    "# Checking missing values in dataset \n",
-    "df.isnull().sum()\n",
-    "Age                         0\n",
-    "Attrition                   0\n",
-    "BusinessTravel              0\n",
-    "DailyRate                   0\n",
-    "Department                  0\n",
-    "DistanceFromHome            0\n",
-    "Education                   0\n",
-    "EducationField              0\n",
-    "EmployeeCount               0\n",
-    "EmployeeNumber              0\n",
-    "EnvironmentSatisfaction     0\n",
-    "Gender                      0\n",
-    "HourlyRate                  0\n",
-    "JobInvolvement              0\n",
-    "JobLevel                    0\n",
-    "JobRole                     0\n",
-    "JobSatisfaction             0\n",
-    "MaritalStatus               0\n",
-    "MonthlyIncome               0\n",
-    "MonthlyRate                 0\n",
-    "NumCompaniesWorked          0\n",
-    "Over18                      0\n",
-    "OverTime                    0\n",
-    "PercentSalaryHike           0\n",
-    "PerformanceRating           0\n",
-    "RelationshipSatisfaction    0\n",
-    "StandardHours               0\n",
-    "StockOptionLevel            0\n",
-    "TotalWorkingYears           0\n",
-    "TrainingTimesLastYear       0\n",
-    "WorkLifeBalance             0\n",
-    "YearsAtCompany              0\n",
-    "YearsInCurrentRole          0\n",
-    "YearsSinceLastPromotion     0\n",
-    "YearsWithCurrManager        0\n",
-    "dtype: int64\n",
-    "No Missing values found in dataset\n",
-    "Seperate X and Y\n",
-    "X = df.drop(labels=['Attrition'],axis=1)\n",
-    "Y = df[['Attrition']]\n",
-    "Y.head()\n",
-    "Attrition\n",
-    "0\tYes\n",
-    "1\tNo\n",
-    "2\tYes\n",
-    "3\tNo\n",
-    "4\tNo\n",
-    "y_mapper = {'Yes':1,'No':0}\n",
-    "Y = Y.replace(y_mapper)\n",
-    "Y.head()\n",
-    "Attrition\n",
-    "0\t1\n",
-    "1\t0\n",
-    "2\t1\n",
-    "3\t0\n",
-    "4\t0\n",
-    "cat_cols = list(X.select_dtypes(include='object').columns)\n",
-    "num_cols = list(X.select_dtypes(exclude='object').columns)\n",
-    "cat_cols\n",
-    "['BusinessTravel',\n",
-    " 'Department',\n",
-    " 'EducationField',\n",
-    " 'Gender',\n",
-    " 'JobRole',\n",
-    " 'MaritalStatus',\n",
-    " 'Over18',\n",
-    " 'OverTime']\n",
-    "num_cols\n",
-    "['Age',\n",
-    " 'DailyRate',\n",
-    " 'DistanceFromHome',\n",
-    " 'Education',\n",
-    " 'EmployeeCount',\n",
-    " 'EmployeeNumber',\n",
-    " 'EnvironmentSatisfaction',\n",
-    " 'HourlyRate',\n",
-    " 'JobInvolvement',\n",
-    " 'JobLevel',\n",
-    " 'JobSatisfaction',\n",
-    " 'MonthlyIncome',\n",
-    " 'MonthlyRate',\n",
-    " 'NumCompaniesWorked',\n",
-    " 'PercentSalaryHike',\n",
-    " 'PerformanceRating',\n",
-    " 'RelationshipSatisfaction',\n",
-    " 'StandardHours',\n",
-    " 'StockOptionLevel',\n",
-    " 'TotalWorkingYears',\n",
-    " 'TrainingTimesLastYear',\n",
-    " 'WorkLifeBalance',\n",
-    " 'YearsAtCompany',\n",
-    " 'YearsInCurrentRole',\n",
-    " 'YearsSinceLastPromotion',\n",
-    " 'YearsWithCurrManager']\n",
-    "len(num_cols)\n",
-    "26\n",
-    "Feature selection for numerical columns\n",
-    "from warnings import filterwarnings\n",
-    "filterwarnings('ignore')\n",
-    "from sklearn.feature_selection import SelectKBest, f_classif\n",
-    "X_num = X[num_cols]\n",
-    "k_best_numerical = SelectKBest(f_classif,k=10)\n",
-    "k_best_numerical.fit_transform(X_num,Y)\n",
-    "selected_num_features = list(X_num.columns[k_best_numerical.get_support()])\n",
-    "selected_num_features\n",
-    "['Age',\n",
-    " 'JobInvolvement',\n",
-    " 'JobLevel',\n",
-    " 'JobSatisfaction',\n",
-    " 'MonthlyIncome',\n",
-    " 'StockOptionLevel',\n",
-    " 'TotalWorkingYears',\n",
-    " 'YearsAtCompany',\n",
-    " 'YearsInCurrentRole',\n",
-    " 'YearsWithCurrManager']\n",
-    "Feature Selection for categorical variables\n",
-    "from sklearn.feature_selection import SelectKBest, chi2\n",
-    "X_cat = X[cat_cols]\n",
-    "from sklearn.preprocessing import OrdinalEncoder\n",
-    "oe = OrdinalEncoder()\n",
-    "X_cat_encoded = pd.DataFrame(oe.fit_transform(X_cat),columns=oe.get_feature_names_out())\n",
-    "k_best_categorical = SelectKBest(chi2,k=5)\n",
-    "k_best_categorical.fit_transform(X_cat_encoded,Y)\n",
-    "selected_cat_features = list(X_cat_encoded.columns[k_best_categorical.get_support()])\n",
-    "selected_cat_features\n",
-    "['Department', 'EducationField', 'JobRole', 'MaritalStatus', 'OverTime']\n",
-    "selected_features = selected_num_features + selected_cat_features\n",
-    "selected_features\n",
-    "['Age',\n",
-    " 'JobInvolvement',\n",
-    " 'JobLevel',\n",
-    " 'JobSatisfaction',\n",
-    " 'MonthlyIncome',\n",
-    " 'StockOptionLevel',\n",
-    " 'TotalWorkingYears',\n",
-    " 'YearsAtCompany',\n",
-    " 'YearsInCurrentRole',\n",
-    " 'YearsWithCurrManager',\n",
-    " 'Department',\n",
-    " 'EducationField',\n",
-    " 'JobRole',\n",
-    " 'MaritalStatus',\n",
-    " 'OverTime']\n",
-    "X_selected = X[selected_features]\n",
-    "X_selected.head()\n",
-    "Age\tJobInvolvement\tJobLevel\tJobSatisfaction\tMonthlyIncome\tStockOptionLevel\tTotalWorkingYears\tYearsAtCompany\tYearsInCurrentRole\tYearsWithCurrManager\tDepartment\tEducationField\tJobRole\tMaritalStatus\tOverTime\n",
-    "0\t41\t3\t2\t4\t5993\t0\t8\t6\t4\t5\tSales\tLife Sciences\tSales Executive\tSingle\tYes\n",
-    "1\t49\t2\t2\t2\t5130\t1\t10\t10\t7\t7\tResearch & Development\tLife Sciences\tResearch Scientist\tMarried\tNo\n",
-    "2\t37\t2\t1\t3\t2090\t0\t7\t0\t0\t0\tResearch & Development\tOther\tLaboratory Technician\tSingle\tYes\n",
-    "3\t33\t3\t1\t3\t2909\t0\t8\t8\t7\t0\tResearch & Development\tLife Sciences\tResearch Scientist\tMarried\tYes\n",
-    "4\t27\t3\t1\t2\t3468\t1\t6\t2\t2\t2\tResearch & Development\tMedical\tLaboratory Technician\tMarried\tNo\n",
-    "X_selected.shape\n",
-    "(1470, 15)\n",
-    "Feature Selection is completed\n",
-    "Train Test Split of data\n",
-    "from sklearn.model_selection import train_test_split\n",
-    "xtrain, xtest, ytrain, ytest = train_test_split(X_selected,Y,test_size=0.2,random_state=42,stratify=Y)\n",
-    "xtrain.shape\n",
-    "(1176, 15)\n",
-    "xtest.shape\n",
-    "(294, 15)\n",
-    "ytrain.value_counts()\n",
-    "Attrition\n",
-    "0            986\n",
-    "1            190\n",
-    "dtype: int64\n",
-    "ytest.value_counts()\n",
-    "Attrition\n",
-    "0            247\n",
-    "1             47\n",
-    "dtype: int64\n",
-    "Creating numeric and categorical pipeline\n",
-    "from sklearn.impute import SimpleImputer\n",
-    "from sklearn.pipeline import Pipeline\n",
-    "from sklearn.preprocessing import OneHotEncoder,StandardScaler\n",
-    "\n",
-    "# Numeric Pipeline creation\n",
-    "num_pipeline = Pipeline(steps=[('imputer',SimpleImputer(strategy='mean')),\n",
-    "                               ('scaler',StandardScaler())])\n",
-    "\n",
-    "# Categorical Pipeline creation\n",
-    "cat_pipeline = Pipeline(steps=[('imputer',SimpleImputer(strategy='most_frequent')),\n",
-    "                               ('one_hot_encoder',OneHotEncoder()),\n",
-    "                               ('scaler',StandardScaler(with_mean=False))])\n",
-    "ColumnTransformer to combine numeric and Categorical pipelines\n",
-    "selected_num_features\n",
-    "['Age',\n",
-    " 'JobInvolvement',\n",
-    " 'JobLevel',\n",
-    " 'JobSatisfaction',\n",
-    " 'MonthlyIncome',\n",
-    " 'StockOptionLevel',\n",
-    " 'TotalWorkingYears',\n",
-    " 'YearsAtCompany',\n",
-    " 'YearsInCurrentRole',\n",
-    " 'YearsWithCurrManager']\n",
-    "selected_cat_features\n",
-    "['Department', 'EducationField', 'JobRole', 'MaritalStatus', 'OverTime']\n",
-    "from sklearn.compose import ColumnTransformer\n",
-    "preprocessor = ColumnTransformer([('num_pipeline',num_pipeline,selected_num_features),\n",
-    "                                  ('cat_pipeline',cat_pipeline,selected_cat_features)])\n",
-    "Transform the dataset with ColumnTransformer\n",
-    "xtrain_transformed = pd.DataFrame(preprocessor.fit_transform(xtrain),columns=preprocessor.get_feature_names_out())\n",
-    "xtest_transformed = pd.DataFrame(preprocessor.transform(xtest),columns=preprocessor.get_feature_names_out())\n",
-    "preprocessor.get_feature_names_out()\n",
-    "array(['num_pipeline__Age', 'num_pipeline__JobInvolvement',\n",
-    "       'num_pipeline__JobLevel', 'num_pipeline__JobSatisfaction',\n",
-    "       'num_pipeline__MonthlyIncome', 'num_pipeline__StockOptionLevel',\n",
-    "       'num_pipeline__TotalWorkingYears', 'num_pipeline__YearsAtCompany',\n",
-    "       'num_pipeline__YearsInCurrentRole',\n",
-    "       'num_pipeline__YearsWithCurrManager',\n",
-    "       'cat_pipeline__Department_Human Resources',\n",
-    "       'cat_pipeline__Department_Research & Development',\n",
-    "       'cat_pipeline__Department_Sales',\n",
-    "       'cat_pipeline__EducationField_Human Resources',\n",
-    "       'cat_pipeline__EducationField_Life Sciences',\n",
-    "       'cat_pipeline__EducationField_Marketing',\n",
-    "       'cat_pipeline__EducationField_Medical',\n",
-    "       'cat_pipeline__EducationField_Other',\n",
-    "       'cat_pipeline__EducationField_Technical Degree',\n",
-    "       'cat_pipeline__JobRole_Healthcare Representative',\n",
-    "       'cat_pipeline__JobRole_Human Resources',\n",
-    "       'cat_pipeline__JobRole_Laboratory Technician',\n",
-    "       'cat_pipeline__JobRole_Manager',\n",
-    "       'cat_pipeline__JobRole_Manufacturing Director',\n",
-    "       'cat_pipeline__JobRole_Research Director',\n",
-    "       'cat_pipeline__JobRole_Research Scientist',\n",
-    "       'cat_pipeline__JobRole_Sales Executive',\n",
-    "       'cat_pipeline__JobRole_Sales Representative',\n",
-    "       'cat_pipeline__MaritalStatus_Divorced',\n",
-    "       'cat_pipeline__MaritalStatus_Married',\n",
-    "       'cat_pipeline__MaritalStatus_Single', 'cat_pipeline__OverTime_No',\n",
-    "       'cat_pipeline__OverTime_Yes'], dtype=object)\n",
-    "xtrain_transformed.head()\n",
-    "num_pipeline__Age\tnum_pipeline__JobInvolvement\tnum_pipeline__JobLevel\tnum_pipeline__JobSatisfaction\tnum_pipeline__MonthlyIncome\tnum_pipeline__StockOptionLevel\tnum_pipeline__TotalWorkingYears\tnum_pipeline__YearsAtCompany\tnum_pipeline__YearsInCurrentRole\tnum_pipeline__YearsWithCurrManager\t...\tcat_pipeline__JobRole_Manufacturing Director\tcat_pipeline__JobRole_Research Director\tcat_pipeline__JobRole_Research Scientist\tcat_pipeline__JobRole_Sales Executive\tcat_pipeline__JobRole_Sales Representative\tcat_pipeline__MaritalStatus_Divorced\tcat_pipeline__MaritalStatus_Married\tcat_pipeline__MaritalStatus_Single\tcat_pipeline__OverTime_No\tcat_pipeline__OverTime_Yes\n",
-    "0\t1.090194\t1.795282\t1.762189\t-0.647997\t2.026752\t2.613100\t2.261482\t-0.665706\t-0.625365\t-0.616406\t...\t0.0\t0.0\t0.0\t0.0\t0.000000\t2.399905\t0.000000\t0.0\t2.205793\t0.000000\n",
-    "1\t-1.634828\t0.373564\t-0.986265\t1.153526\t-0.864408\t0.247430\t-1.072675\t-0.830071\t-0.905635\t-0.897047\t...\t0.0\t0.0\t0.0\t0.0\t0.000000\t0.000000\t2.006697\t0.0\t2.205793\t0.000000\n",
-    "2\t0.981193\t0.373564\t1.762189\t0.252765\t2.347706\t0.247430\t1.492061\t0.813578\t1.336527\t1.348076\t...\t0.0\t0.0\t0.0\t0.0\t0.000000\t0.000000\t2.006697\t0.0\t2.205793\t0.000000\n",
-    "3\t-1.307825\t0.373564\t-0.986265\t0.252765\t-0.956202\t-0.935405\t-0.559727\t-0.008246\t-0.064824\t0.506155\t...\t0.0\t0.0\t0.0\t0.0\t4.544641\t0.000000\t2.006697\t0.0\t2.205793\t0.000000\n",
-    "4\t0.654191\t0.373564\t-0.070114\t0.252765\t-0.185956\t0.247430\t-0.175017\t0.156119\t0.775986\t0.786795\t...\t0.0\t0.0\t0.0\t0.0\t0.000000\t2.399905\t0.000000\t0.0\t0.000000\t2.205793\n",
-    "5 rows × 33 columns\n",
-    "\n",
-    "xtest_transformed.head()\n",
-    "num_pipeline__Age\tnum_pipeline__JobInvolvement\tnum_pipeline__JobLevel\tnum_pipeline__JobSatisfaction\tnum_pipeline__MonthlyIncome\tnum_pipeline__StockOptionLevel\tnum_pipeline__TotalWorkingYears\tnum_pipeline__YearsAtCompany\tnum_pipeline__YearsInCurrentRole\tnum_pipeline__YearsWithCurrManager\t...\tcat_pipeline__JobRole_Manufacturing Director\tcat_pipeline__JobRole_Research Director\tcat_pipeline__JobRole_Research Scientist\tcat_pipeline__JobRole_Sales Executive\tcat_pipeline__JobRole_Sales Representative\tcat_pipeline__MaritalStatus_Divorced\tcat_pipeline__MaritalStatus_Married\tcat_pipeline__MaritalStatus_Single\tcat_pipeline__OverTime_No\tcat_pipeline__OverTime_Yes\n",
-    "0\t-1.416826\t0.373564\t-0.986265\t-0.647997\t-0.969745\t0.247430\t-1.329148\t-0.994436\t-1.185905\t-1.177687\t...\t0.0\t0.0\t0.000000\t0.0\t4.544641\t0.000000\t2.006697\t0.0\t2.205793\t0.000000\n",
-    "1\t0.763191\t1.795282\t-0.986265\t1.153526\t-0.974474\t0.247430\t-0.175017\t0.484849\t0.215446\t0.786795\t...\t0.0\t0.0\t2.564289\t0.0\t0.000000\t0.000000\t2.006697\t0.0\t2.205793\t0.000000\n",
-    "2\t-0.653820\t-1.048155\t0.846038\t1.153526\t1.077650\t0.247430\t-0.175017\t-0.336976\t-0.064824\t-0.897047\t...\t0.0\t0.0\t0.000000\t0.0\t0.000000\t2.399905\t0.000000\t0.0\t2.205793\t0.000000\n",
-    "3\t0.763191\t1.795282\t2.678340\t-1.548758\t2.718533\t1.430265\t1.876772\t2.950322\t1.336527\t2.470637\t...\t0.0\t0.0\t0.000000\t0.0\t0.000000\t2.399905\t0.000000\t0.0\t2.205793\t0.000000\n",
-    "4\t-0.108815\t-1.048155\t-0.986265\t0.252765\t-0.678457\t0.247430\t-1.200911\t-0.994436\t-1.185905\t-1.177687\t...\t0.0\t0.0\t2.564289\t0.0\t0.000000\t0.000000\t2.006697\t0.0\t0.000000\t2.205793\n",
-    "5 rows × 33 columns\n",
-    "\n",
-    "Training Random Forest\n",
-    "from sklearn.ensemble import RandomForestClassifier\n",
-    "rfc = RandomForestClassifier(n_estimators=100,max_depth=8,random_state=21)\n",
-    "rfc.fit(xtrain_transformed,ytrain)\n",
-    "RandomForestClassifier(max_depth=8, random_state=21)\n",
-    "In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook.\n",
-    "On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.\n",
-    "from sklearn.model_selection import cross_val_score, StratifiedKFold\n",
-    "skf = StratifiedKFold(n_splits=5, shuffle=True)\n",
-    "scores = cross_val_score(rfc,xtrain_transformed,ytrain,cv=skf,scoring='accuracy')\n",
-    "scores\n",
-    "array([0.84322034, 0.84255319, 0.85957447, 0.86382979, 0.86808511])\n",
-    "import numpy as np\n",
-    "np.mean(scores)\n",
-    "0.855452578434908\n",
-    "Hyperparameter Tuning\n",
-    "parameters = {\n",
-    "    'n_estimators':[10,50,100,200,300,400],\n",
-    "    'max_depth':[4,5,6,7,8,9,10],\n",
-    "    'min_samples_leaf':[2,3,4,5,6],\n",
-    "    'min_samples_split':[2,5,10]\n",
-    "}\n",
-    "from sklearn.model_selection import RandomizedSearchCV\n",
-    "rscv = RandomizedSearchCV(RandomForestClassifier(),\n",
-    "                          param_distributions=parameters,\n",
-    "                          cv=skf,\n",
-    "                          n_iter=50,\n",
-    "                          scoring='accuracy',\n",
-    "                          verbose=3)\n",
-    "rscv.fit(xtrain_transformed,ytrain)\n",
-    "Fitting 5 folds for each of 50 candidates, totalling 250 fits\n",
-    "[CV 1/5] END max_depth=10, min_samples_leaf=5, min_samples_split=10, n_estimators=300;, score=0.852 total time=   0.4s\n",
-    "[CV 2/5] END max_depth=10, min_samples_leaf=5, min_samples_split=10, n_estimators=300;, score=0.864 total time=   0.4s\n",
-    "[CV 3/5] END max_depth=10, min_samples_leaf=5, min_samples_split=10, n_estimators=300;, score=0.851 total time=   0.4s\n",
-    "[CV 4/5] END max_depth=10, min_samples_leaf=5, min_samples_split=10, n_estimators=300;, score=0.860 total time=   0.4s\n",
-    "[CV 5/5] END max_depth=10, min_samples_leaf=5, min_samples_split=10, n_estimators=300;, score=0.860 total time=   0.5s\n",
-    "[CV 1/5] END max_depth=8, min_samples_leaf=6, min_samples_split=10, n_estimators=200;, score=0.864 total time=   0.3s\n",
-    "[CV 2/5] END max_depth=8, min_samples_leaf=6, min_samples_split=10, n_estimators=200;, score=0.860 total time=   0.3s\n",
-    "[CV 3/5] END max_depth=8, min_samples_leaf=6, min_samples_split=10, n_estimators=200;, score=0.855 total time=   0.3s\n",
-    "[CV 4/5] END max_depth=8, min_samples_leaf=6, min_samples_split=10, n_estimators=200;, score=0.860 total time=   0.3s\n",
-    "[CV 5/5] END max_depth=8, min_samples_leaf=6, min_samples_split=10, n_estimators=200;, score=0.860 total time=   0.2s\n",
-    "[CV 1/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.864 total time=   0.0s\n",
-    "[CV 2/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.860 total time=   0.0s\n",
-    "[CV 3/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.851 total time=   0.0s\n",
-    "[CV 4/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.847 total time=   0.0s\n",
-    "[CV 5/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.860 total time=   0.0s\n",
-    "[CV 1/5] END max_depth=6, min_samples_leaf=6, min_samples_split=2, n_estimators=10;, score=0.869 total time=   0.0s\n",
-    "[CV 2/5] END max_depth=6, min_samples_leaf=6, min_samples_split=2, n_estimators=10;, score=0.855 total time=   0.0s\n",
-    "[CV 3/5] END max_depth=6, min_samples_leaf=6, min_samples_split=2, n_estimators=10;, score=0.851 total time=   0.0s\n",
-    "[CV 4/5] END max_depth=6, min_samples_leaf=6, min_samples_split=2, n_estimators=10;, score=0.860 total time=   0.0s\n",
-    "[CV 5/5] END max_depth=6, min_samples_leaf=6, min_samples_split=2, n_estimators=10;, score=0.860 total time=   0.0s\n",
-    "[CV 1/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=200;, score=0.856 total time=   0.2s\n",
-    "[CV 2/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=200;, score=0.860 total time=   0.2s\n",
-    "[CV 3/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=200;, score=0.855 total time=   0.3s\n",
-    "[CV 4/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=200;, score=0.843 total time=   0.2s\n",
-    "[CV 5/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=200;, score=0.860 total time=   0.2s\n",
-    "[CV 1/5] END max_depth=10, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.869 total time=   0.4s\n",
-    "[CV 2/5] END max_depth=10, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.860 total time=   0.4s\n",
-    "[CV 3/5] END max_depth=10, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.851 total time=   0.5s\n",
-    "[CV 4/5] END max_depth=10, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.851 total time=   0.4s\n",
-    "[CV 5/5] END max_depth=10, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.864 total time=   0.5s\n",
-    "[CV 1/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.864 total time=   0.4s\n",
-    "[CV 2/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.864 total time=   0.4s\n",
-    "[CV 3/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.860 total time=   0.5s\n",
-    "[CV 4/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.851 total time=   0.4s\n",
-    "[CV 5/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.860 total time=   0.4s\n",
-    "[CV 1/5] END max_depth=9, min_samples_leaf=3, min_samples_split=2, n_estimators=100;, score=0.873 total time=   0.1s\n",
-    "[CV 2/5] END max_depth=9, min_samples_leaf=3, min_samples_split=2, n_estimators=100;, score=0.864 total time=   0.1s\n",
-    "[CV 3/5] END max_depth=9, min_samples_leaf=3, min_samples_split=2, n_estimators=100;, score=0.855 total time=   0.1s\n",
-    "[CV 4/5] END max_depth=9, min_samples_leaf=3, min_samples_split=2, n_estimators=100;, score=0.860 total time=   0.1s\n",
-    "[CV 5/5] END max_depth=9, min_samples_leaf=3, min_samples_split=2, n_estimators=100;, score=0.864 total time=   0.1s\n",
-    "[CV 1/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.864 total time=   0.2s\n",
-    "[CV 2/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.864 total time=   0.3s\n",
-    "[CV 3/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.855 total time=   0.3s\n",
-    "[CV 4/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.851 total time=   0.3s\n",
-    "[CV 5/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.860 total time=   0.3s\n",
-    "[CV 1/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=100;, score=0.860 total time=   0.1s\n",
-    "[CV 2/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=100;, score=0.860 total time=   0.1s\n",
-    "[CV 3/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=100;, score=0.864 total time=   0.1s\n",
-    "[CV 4/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=100;, score=0.851 total time=   0.2s\n",
-    "[CV 5/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=100;, score=0.860 total time=   0.1s\n",
-    "[CV 1/5] END max_depth=9, min_samples_leaf=5, min_samples_split=2, n_estimators=50;, score=0.869 total time=   0.0s\n",
-    "[CV 2/5] END max_depth=9, min_samples_leaf=5, min_samples_split=2, n_estimators=50;, score=0.855 total time=   0.0s\n",
-    "[CV 3/5] END max_depth=9, min_samples_leaf=5, min_samples_split=2, n_estimators=50;, score=0.851 total time=   0.0s\n",
-    "[CV 4/5] END max_depth=9, min_samples_leaf=5, min_samples_split=2, n_estimators=50;, score=0.843 total time=   0.0s\n",
-    "[CV 5/5] END max_depth=9, min_samples_leaf=5, min_samples_split=2, n_estimators=50;, score=0.860 total time=   0.0s\n",
-    "[CV 1/5] END max_depth=5, min_samples_leaf=2, min_samples_split=10, n_estimators=100;, score=0.856 total time=   0.1s\n",
-    "[CV 2/5] END max_depth=5, min_samples_leaf=2, min_samples_split=10, n_estimators=100;, score=0.860 total time=   0.1s\n",
-    "[CV 3/5] END max_depth=5, min_samples_leaf=2, min_samples_split=10, n_estimators=100;, score=0.855 total time=   0.1s\n",
-    "[CV 4/5] END max_depth=5, min_samples_leaf=2, min_samples_split=10, n_estimators=100;, score=0.855 total time=   0.1s\n",
-    "[CV 5/5] END max_depth=5, min_samples_leaf=2, min_samples_split=10, n_estimators=100;, score=0.864 total time=   0.1s\n",
-    "[CV 1/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.856 total time=   0.5s\n",
-    "[CV 2/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.860 total time=   0.5s\n",
-    "[CV 3/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.855 total time=   0.5s\n",
-    "[CV 4/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.847 total time=   0.5s\n",
-    "[CV 5/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.860 total time=   0.5s\n",
-    "[CV 1/5] END max_depth=10, min_samples_leaf=3, min_samples_split=2, n_estimators=300;, score=0.864 total time=   0.5s\n",
-    "[CV 2/5] END max_depth=10, min_samples_leaf=3, min_samples_split=2, n_estimators=300;, score=0.860 total time=   0.4s\n",
-    "[CV 3/5] END max_depth=10, min_samples_leaf=3, min_samples_split=2, n_estimators=300;, score=0.847 total time=   0.5s\n",
-    "[CV 4/5] END max_depth=10, min_samples_leaf=3, min_samples_split=2, n_estimators=300;, score=0.855 total time=   0.5s\n",
-    "[CV 5/5] END max_depth=10, min_samples_leaf=3, min_samples_split=2, n_estimators=300;, score=0.860 total time=   0.5s\n",
-    "[CV 1/5] END max_depth=7, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.860 total time=   0.2s\n",
-    "[CV 2/5] END max_depth=7, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.855 total time=   0.2s\n",
-    "[CV 3/5] END max_depth=7, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.847 total time=   0.2s\n",
-    "[CV 4/5] END max_depth=7, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.860 total time=   0.3s\n",
-    "[CV 5/5] END max_depth=7, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.864 total time=   0.3s\n",
-    "[CV 1/5] END max_depth=9, min_samples_leaf=2, min_samples_split=10, n_estimators=50;, score=0.869 total time=   0.0s\n",
-    "[CV 2/5] END max_depth=9, min_samples_leaf=2, min_samples_split=10, n_estimators=50;, score=0.868 total time=   0.0s\n",
-    "[CV 3/5] END max_depth=9, min_samples_leaf=2, min_samples_split=10, n_estimators=50;, score=0.847 total time=   0.0s\n",
-    "[CV 4/5] END max_depth=9, min_samples_leaf=2, min_samples_split=10, n_estimators=50;, score=0.851 total time=   0.0s\n",
-    "[CV 5/5] END max_depth=9, min_samples_leaf=2, min_samples_split=10, n_estimators=50;, score=0.864 total time=   0.0s\n",
-    "[CV 1/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=50;, score=0.869 total time=   0.0s\n",
-    "[CV 2/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=50;, score=0.855 total time=   0.0s\n",
-    "[CV 3/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=50;, score=0.855 total time=   0.0s\n",
-    "[CV 4/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=50;, score=0.847 total time=   0.0s\n",
-    "[CV 5/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=50;, score=0.864 total time=   0.0s\n",
-    "[CV 1/5] END max_depth=7, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.860 total time=   0.3s\n",
-    "[CV 2/5] END max_depth=7, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.864 total time=   0.2s\n",
-    "[CV 3/5] END max_depth=7, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.855 total time=   0.2s\n",
-    "[CV 4/5] END max_depth=7, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.851 total time=   0.3s\n",
-    "[CV 5/5] END max_depth=7, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.860 total time=   0.3s\n",
-    "[CV 1/5] END max_depth=6, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.864 total time=   0.4s\n",
-    "[CV 2/5] END max_depth=6, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.860 total time=   0.4s\n",
-    "[CV 3/5] END max_depth=6, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.855 total time=   0.4s\n",
-    "[CV 4/5] END max_depth=6, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.847 total time=   0.4s\n",
-    "[CV 5/5] END max_depth=6, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.864 total time=   0.4s\n",
-    "[CV 1/5] END max_depth=10, min_samples_leaf=3, min_samples_split=10, n_estimators=100;, score=0.864 total time=   0.1s\n",
-    "[CV 2/5] END max_depth=10, min_samples_leaf=3, min_samples_split=10, n_estimators=100;, score=0.860 total time=   0.1s\n",
-    "[CV 3/5] END max_depth=10, min_samples_leaf=3, min_samples_split=10, n_estimators=100;, score=0.851 total time=   0.1s\n",
-    "[CV 4/5] END max_depth=10, min_samples_leaf=3, min_samples_split=10, n_estimators=100;, score=0.860 total time=   0.1s\n",
-    "[CV 5/5] END max_depth=10, min_samples_leaf=3, min_samples_split=10, n_estimators=100;, score=0.864 total time=   0.1s\n",
-    "[CV 1/5] END max_depth=9, min_samples_leaf=4, min_samples_split=5, n_estimators=400;, score=0.864 total time=   0.6s\n",
-    "[CV 2/5] END max_depth=9, min_samples_leaf=4, min_samples_split=5, n_estimators=400;, score=0.855 total time=   0.6s\n",
-    "[CV 3/5] END max_depth=9, min_samples_leaf=4, min_samples_split=5, n_estimators=400;, score=0.851 total time=   0.6s\n",
-    "[CV 4/5] END max_depth=9, min_samples_leaf=4, min_samples_split=5, n_estimators=400;, score=0.851 total time=   0.6s\n",
-    "[CV 5/5] END max_depth=9, min_samples_leaf=4, min_samples_split=5, n_estimators=400;, score=0.864 total time=   0.6s\n",
-    "[CV 1/5] END max_depth=9, min_samples_leaf=3, min_samples_split=5, n_estimators=10;, score=0.869 total time=   0.0s\n",
-    "[CV 2/5] END max_depth=9, min_samples_leaf=3, min_samples_split=5, n_estimators=10;, score=0.855 total time=   0.0s\n",
-    "[CV 3/5] END max_depth=9, min_samples_leaf=3, min_samples_split=5, n_estimators=10;, score=0.847 total time=   0.0s\n",
-    "[CV 4/5] END max_depth=9, min_samples_leaf=3, min_samples_split=5, n_estimators=10;, score=0.847 total time=   0.0s\n",
-    "[CV 5/5] END max_depth=9, min_samples_leaf=3, min_samples_split=5, n_estimators=10;, score=0.872 total time=   0.0s\n",
-    "[CV 1/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=300;, score=0.856 total time=   0.4s\n",
-    "[CV 2/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=300;, score=0.855 total time=   0.4s\n",
-    "[CV 3/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=300;, score=0.851 total time=   0.4s\n",
-    "[CV 4/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=300;, score=0.851 total time=   0.4s\n",
-    "[CV 5/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=300;, score=0.864 total time=   0.4s\n",
-    "[CV 1/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=100;, score=0.860 total time=   0.1s\n",
-    "[CV 2/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=100;, score=0.855 total time=   0.1s\n",
-    "[CV 3/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=100;, score=0.851 total time=   0.1s\n",
-    "[CV 4/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=100;, score=0.851 total time=   0.1s\n",
-    "[CV 5/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=100;, score=0.860 total time=   0.1s\n",
-    "[CV 1/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=300;, score=0.864 total time=   0.5s\n",
-    "[CV 2/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=300;, score=0.864 total time=   0.5s\n",
-    "[CV 3/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=300;, score=0.847 total time=   0.5s\n",
-    "[CV 4/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=300;, score=0.847 total time=   0.5s\n",
-    "[CV 5/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=300;, score=0.860 total time=   0.5s\n",
-    "[CV 1/5] END max_depth=6, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.856 total time=   0.1s\n",
-    "[CV 2/5] END max_depth=6, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.864 total time=   0.1s\n",
-    "[CV 3/5] END max_depth=6, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.860 total time=   0.1s\n",
-    "[CV 4/5] END max_depth=6, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.855 total time=   0.1s\n",
-    "[CV 5/5] END max_depth=6, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.864 total time=   0.1s\n",
-    "[CV 1/5] END max_depth=10, min_samples_leaf=6, min_samples_split=2, n_estimators=400;, score=0.864 total time=   0.6s\n",
-    "[CV 2/5] END max_depth=10, min_samples_leaf=6, min_samples_split=2, n_estimators=400;, score=0.864 total time=   0.6s\n",
-    "[CV 3/5] END max_depth=10, min_samples_leaf=6, min_samples_split=2, n_estimators=400;, score=0.855 total time=   0.6s\n",
-    "[CV 4/5] END max_depth=10, min_samples_leaf=6, min_samples_split=2, n_estimators=400;, score=0.851 total time=   0.6s\n",
-    "[CV 5/5] END max_depth=10, min_samples_leaf=6, min_samples_split=2, n_estimators=400;, score=0.860 total time=   0.6s\n",
-    "[CV 1/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.856 total time=   0.4s\n",
-    "[CV 2/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.855 total time=   0.4s\n",
-    "[CV 3/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.855 total time=   0.4s\n",
-    "[CV 4/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.851 total time=   0.4s\n",
-    "[CV 5/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.860 total time=   0.4s\n",
-    "[CV 1/5] END max_depth=4, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.864 total time=   0.0s\n",
-    "[CV 2/5] END max_depth=4, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.851 total time=   0.0s\n",
-    "[CV 3/5] END max_depth=4, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.855 total time=   0.0s\n",
-    "[CV 4/5] END max_depth=4, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.843 total time=   0.0s\n",
-    "[CV 5/5] END max_depth=4, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.860 total time=   0.0s\n",
-    "[CV 1/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.852 total time=   0.0s\n",
-    "[CV 2/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.860 total time=   0.0s\n",
-    "[CV 3/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.851 total time=   0.0s\n",
-    "[CV 4/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.855 total time=   0.0s\n",
-    "[CV 5/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.860 total time=   0.0s\n",
-    "[CV 1/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=400;, score=0.869 total time=   0.5s\n",
-    "[CV 2/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=400;, score=0.855 total time=   0.5s\n",
-    "[CV 3/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=400;, score=0.855 total time=   0.5s\n",
-    "[CV 4/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=400;, score=0.843 total time=   0.5s\n",
-    "[CV 5/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=400;, score=0.864 total time=   0.5s\n",
-    "[CV 1/5] END max_depth=7, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.860 total time=   0.1s\n",
-    "[CV 2/5] END max_depth=7, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.855 total time=   0.1s\n",
-    "[CV 3/5] END max_depth=7, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.864 total time=   0.1s\n",
-    "[CV 4/5] END max_depth=7, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.855 total time=   0.1s\n",
-    "[CV 5/5] END max_depth=7, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.860 total time=   0.1s\n",
-    "[CV 1/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=100;, score=0.877 total time=   0.1s\n",
-    "[CV 2/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=100;, score=0.855 total time=   0.1s\n",
-    "[CV 3/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=100;, score=0.855 total time=   0.1s\n",
-    "[CV 4/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=100;, score=0.851 total time=   0.1s\n",
-    "[CV 5/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=100;, score=0.855 total time=   0.1s\n",
-    "[CV 1/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=100;, score=0.856 total time=   0.1s\n",
-    "[CV 2/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=100;, score=0.860 total time=   0.1s\n",
-    "[CV 3/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=100;, score=0.851 total time=   0.1s\n",
-    "[CV 4/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=100;, score=0.851 total time=   0.1s\n",
-    "[CV 5/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=100;, score=0.864 total time=   0.1s\n",
-    "[CV 1/5] END max_depth=4, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.864 total time=   0.0s\n",
-    "[CV 2/5] END max_depth=4, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.860 total time=   0.0s\n",
-    "[CV 3/5] END max_depth=4, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.855 total time=   0.1s\n",
-    "[CV 4/5] END max_depth=4, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.855 total time=   0.0s\n",
-    "[CV 5/5] END max_depth=4, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.855 total time=   0.1s\n",
-    "[CV 1/5] END max_depth=4, min_samples_leaf=3, min_samples_split=10, n_estimators=200;, score=0.864 total time=   0.2s\n",
-    "[CV 2/5] END max_depth=4, min_samples_leaf=3, min_samples_split=10, n_estimators=200;, score=0.860 total time=   0.2s\n",
-    "[CV 3/5] END max_depth=4, min_samples_leaf=3, min_samples_split=10, n_estimators=200;, score=0.851 total time=   0.2s\n",
-    "[CV 4/5] END max_depth=4, min_samples_leaf=3, min_samples_split=10, n_estimators=200;, score=0.847 total time=   0.2s\n",
-    "[CV 5/5] END max_depth=4, min_samples_leaf=3, min_samples_split=10, n_estimators=200;, score=0.855 total time=   0.2s\n",
-    "[CV 1/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=10;, score=0.873 total time=   0.0s\n",
-    "[CV 2/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=10;, score=0.855 total time=   0.0s\n",
-    "[CV 3/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=10;, score=0.860 total time=   0.0s\n",
-    "[CV 4/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=10;, score=0.834 total time=   0.0s\n",
-    "[CV 5/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=10;, score=0.855 total time=   0.0s\n",
-    "[CV 1/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=200;, score=0.856 total time=   0.2s\n",
-    "[CV 2/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=200;, score=0.864 total time=   0.2s\n",
-    "[CV 3/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=200;, score=0.855 total time=   0.2s\n",
-    "[CV 4/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=200;, score=0.851 total time=   0.2s\n",
-    "[CV 5/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=200;, score=0.855 total time=   0.2s\n",
-    "[CV 1/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=400;, score=0.856 total time=   0.6s\n",
-    "[CV 2/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=400;, score=0.864 total time=   0.6s\n",
-    "[CV 3/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=400;, score=0.851 total time=   0.6s\n",
-    "[CV 4/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=400;, score=0.855 total time=   0.6s\n",
-    "[CV 5/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=400;, score=0.864 total time=   0.6s\n",
-    "[CV 1/5] END max_depth=6, min_samples_leaf=2, min_samples_split=2, n_estimators=10;, score=0.852 total time=   0.0s\n",
-    "[CV 2/5] END max_depth=6, min_samples_leaf=2, min_samples_split=2, n_estimators=10;, score=0.851 total time=   0.0s\n",
-    "[CV 3/5] END max_depth=6, min_samples_leaf=2, min_samples_split=2, n_estimators=10;, score=0.855 total time=   0.0s\n",
-    "[CV 4/5] END max_depth=6, min_samples_leaf=2, min_samples_split=2, n_estimators=10;, score=0.834 total time=   0.0s\n",
-    "[CV 5/5] END max_depth=6, min_samples_leaf=2, min_samples_split=2, n_estimators=10;, score=0.872 total time=   0.0s\n",
-    "[CV 1/5] END max_depth=8, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.856 total time=   0.6s\n",
-    "[CV 2/5] END max_depth=8, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.864 total time=   0.6s\n",
-    "[CV 3/5] END max_depth=8, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.855 total time=   0.6s\n",
-    "[CV 4/5] END max_depth=8, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.855 total time=   0.6s\n",
-    "[CV 5/5] END max_depth=8, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.860 total time=   0.6s\n",
-    "[CV 1/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.856 total time=   0.0s\n",
-    "[CV 2/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.868 total time=   0.0s\n",
-    "[CV 3/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.855 total time=   0.0s\n",
-    "[CV 4/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.864 total time=   0.0s\n",
-    "[CV 5/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.855 total time=   0.0s\n",
-    "[CV 1/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=50;, score=0.873 total time=   0.0s\n",
-    "[CV 2/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=50;, score=0.855 total time=   0.0s\n",
-    "[CV 3/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=50;, score=0.855 total time=   0.0s\n",
-    "[CV 4/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=50;, score=0.860 total time=   0.0s\n",
-    "[CV 5/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=50;, score=0.860 total time=   0.0s\n",
-    "[CV 1/5] END max_depth=5, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.856 total time=   0.2s\n",
-    "[CV 2/5] END max_depth=5, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.864 total time=   0.2s\n",
-    "[CV 3/5] END max_depth=5, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.855 total time=   0.2s\n",
-    "[CV 4/5] END max_depth=5, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.851 total time=   0.2s\n",
-    "[CV 5/5] END max_depth=5, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.864 total time=   0.2s\n",
-    "[CV 1/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=10;, score=0.864 total time=   0.0s\n",
-    "[CV 2/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=10;, score=0.864 total time=   0.0s\n",
-    "[CV 3/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=10;, score=0.855 total time=   0.0s\n",
-    "[CV 4/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=10;, score=0.847 total time=   0.0s\n",
-    "[CV 5/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=10;, score=0.868 total time=   0.0s\n",
-    "[CV 1/5] END max_depth=4, min_samples_leaf=6, min_samples_split=10, n_estimators=10;, score=0.869 total time=   0.0s\n",
-    "[CV 2/5] END max_depth=4, min_samples_leaf=6, min_samples_split=10, n_estimators=10;, score=0.847 total time=   0.0s\n",
-    "[CV 3/5] END max_depth=4, min_samples_leaf=6, min_samples_split=10, n_estimators=10;, score=0.851 total time=   0.0s\n",
-    "[CV 4/5] END max_depth=4, min_samples_leaf=6, min_samples_split=10, n_estimators=10;, score=0.843 total time=   0.0s\n",
-    "[CV 5/5] END max_depth=4, min_samples_leaf=6, min_samples_split=10, n_estimators=10;, score=0.860 total time=   0.0s\n",
-    "[CV 1/5] END max_depth=5, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.852 total time=   0.0s\n",
-    "[CV 2/5] END max_depth=5, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.847 total time=   0.0s\n",
-    "[CV 3/5] END max_depth=5, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.834 total time=   0.0s\n",
-    "[CV 4/5] END max_depth=5, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.843 total time=   0.0s\n",
-    "[CV 5/5] END max_depth=5, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.855 total time=   0.0s\n",
-    "[CV 1/5] END max_depth=5, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.860 total time=   0.0s\n",
-    "[CV 2/5] END max_depth=5, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.864 total time=   0.0s\n",
-    "[CV 3/5] END max_depth=5, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.855 total time=   0.0s\n",
-    "[CV 4/5] END max_depth=5, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.847 total time=   0.0s\n",
-    "[CV 5/5] END max_depth=5, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.855 total time=   0.0s\n",
-    "[CV 1/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.860 total time=   0.1s\n",
-    "[CV 2/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.860 total time=   0.1s\n",
-    "[CV 3/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.860 total time=   0.1s\n",
-    "[CV 4/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.855 total time=   0.1s\n",
-    "[CV 5/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.864 total time=   0.1s\n",
-    "[CV 1/5] END max_depth=6, min_samples_leaf=4, min_samples_split=5, n_estimators=100;, score=0.873 total time=   0.1s\n",
-    "[CV 2/5] END max_depth=6, min_samples_leaf=4, min_samples_split=5, n_estimators=100;, score=0.864 total time=   0.1s\n",
-    "[CV 3/5] END max_depth=6, min_samples_leaf=4, min_samples_split=5, n_estimators=100;, score=0.855 total time=   0.1s\n",
-    "[CV 4/5] END max_depth=6, min_samples_leaf=4, min_samples_split=5, n_estimators=100;, score=0.851 total time=   0.1s\n",
-    "[CV 5/5] END max_depth=6, min_samples_leaf=4, min_samples_split=5, n_estimators=100;, score=0.860 total time=   0.1s\n",
-    "RandomizedSearchCV(cv=StratifiedKFold(n_splits=5, random_state=None, shuffle=True),\n",
-    "                   estimator=RandomForestClassifier(), n_iter=50,\n",
-    "                   param_distributions={'max_depth': [4, 5, 6, 7, 8, 9, 10],\n",
-    "                                        'min_samples_leaf': [2, 3, 4, 5, 6],\n",
-    "                                        'min_samples_split': [2, 5, 10],\n",
-    "                                        'n_estimators': [10, 50, 100, 200, 300,\n",
-    "                                                         400]},\n",
-    "                   scoring='accuracy', verbose=3)\n",
-    "In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook.\n",
-    "On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.\n",
-    "rscv.best_params_\n",
-    "{'n_estimators': 100,\n",
-    " 'min_samples_split': 2,\n",
-    " 'min_samples_leaf': 3,\n",
-    " 'max_depth': 9}\n",
-    "rscv.best_score_\n",
-    "0.8630869094843131\n",
-    "best_rfc = rscv.best_estimator_\n",
-    "best_rfc\n",
-    "RandomForestClassifier(max_depth=9, min_samples_leaf=3)\n",
-    "In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook.\n",
-    "On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.\n",
-    "Evaluate model on test data\n",
-    "ypred_test = best_rfc.predict(xtest_transformed)\n",
-    "ypred_test\n",
-    "array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
-    "       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
-    "       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
-    "       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
-    "       0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
-    "       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,\n",
-    "       0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
-    "       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,\n",
-    "       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,\n",
-    "       0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,\n",
-    "       0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
-    "       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
-    "       0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
-    "       0, 0, 0, 0, 0, 0, 0, 0], dtype=int64)\n",
-    "from sklearn.metrics import confusion_matrix\n",
-    "import seaborn as sns\n",
-    "cf = confusion_matrix(ytest, ypred_test)\n",
-    "sns.heatmap(cf,annot=True,fmt='d')\n",
-    "<Axes: >\n",
-    "\n",
-    "from sklearn.metrics import accuracy_score\n",
-    "acc = accuracy_score(ytest, ypred_test)\n",
-    "print(f'Accuracy on testing data is {acc:.4f}')\n",
-    "Accuracy on testing data is 0.8401\n",
-    "Insights\n",
-    "Above model has accuracy of 0.8503 on testing data\n",
-    "However above data has imbalance data on target\n",
-    "To deal with imbalanced techniques such as SMOTE (Synthetic Minority Oversampling TEchnique)\n",
-    "Feature selection can also be avoided in above data and performance should be checked with all features as well\n",
-    "Question 2\n",
-    "\n",
-    "Question 2 : Build a pipeline that includes random forest classifier and a logistic regression classifier , and then voting classifier to combine their predictions. Train the pipeline on iris dataset and evaluate its accuracy\n",
-    "Answer :\n",
-    "Load Iris Dataset\n",
-    "from sklearn.datasets import load_iris\n",
-    "X,Y = load_iris(return_X_y=True)\n",
-    "X.shape\n",
-    "(150, 4)\n",
-    "Y.shape\n",
-    "(150,)\n",
-    "Train Test Split\n",
-    "from sklearn.model_selection import train_test_split\n",
-    "xtrain, xtest, ytrain, ytest = train_test_split(X,Y,test_size=0.3,random_state=42)\n",
-    "xtrain.shape\n",
-    "(105, 4)\n",
-    "xtest.shape\n",
-    "(45, 4)\n",
-    "Standard Scaling\n",
-    "from sklearn.preprocessing import StandardScaler\n",
-    "scaler = StandardScaler()\n",
-    "xtrain = scaler.fit_transform(xtrain)\n",
-    "xtest = scaler.transform(xtest)\n",
-    "Create pipeline\n",
-    "from sklearn.pipeline import Pipeline\n",
-    "from sklearn.ensemble import RandomForestClassifier\n",
-    "from sklearn.linear_model import LogisticRegression\n",
-    "from sklearn.ensemble import VotingClassifier\n",
-    "from sklearn.preprocessing import StandardScaler\n",
-    "\n",
-    "# Defining Base models\n",
-    "rfc = RandomForestClassifier(n_estimators=100,max_depth=4)\n",
-    "lr = LogisticRegression(C=1.0)\n",
-    "\n",
-    "# Voting Classifier Pipeline\n",
-    "vc = VotingClassifier(estimators=[('rfc',rfc),\n",
-    "                                  ('lr',lr)],\n",
-    "                                  voting='soft')\n",
-    "vc.fit(xtrain,ytrain)\n",
-    "VotingClassifier(estimators=[('rfc', RandomForestClassifier(max_depth=4)),\n",
-    "                             ('lr', LogisticRegression())],\n",
-    "                 voting='soft')\n",
-    "In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook.\n",
-    "On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.\n",
-    "Predicting the test results\n",
-    "ypred_test = vc.predict(xtest)\n",
-    "ypred_test\n",
-    "array([1, 0, 2, 1, 1, 0, 1, 2, 1, 1, 2, 0, 0, 0, 0, 1, 2, 1, 1, 2, 0, 2,\n",
-    "       0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 1, 0, 0, 2, 1, 0, 0, 0, 2, 1, 1, 0,\n",
-    "       0])\n",
-    "Evaluating the model on test data\n",
-    "from sklearn.metrics import confusion_matrix\n",
-    "import seaborn as sns\n",
-    "cf = confusion_matrix(ytest,ypred_test)\n",
-    "sns.heatmap(cf,annot=True,fmt='d')\n",
-    "<Axes: >\n",
-    "\n",
-    "# Classification Report \n",
-    "from sklearn.metrics import classification_report\n",
-    "print(classification_report(ytest,ypred_test))\n",
-    "              precision    recall  f1-score   support\n",
-    "\n",
-    "           0       1.00      1.00      1.00        19\n",
-    "           1       1.00      1.00      1.00        13\n",
-    "           2       1.00      1.00      1.00        13\n",
-    "\n",
-    "    accuracy                           1.00        45\n",
-    "   macro avg       1.00      1.00      1.00        45\n",
-    "weighted avg       1.00      1.00      1.00        45\n",
-    "\n",
-    "# Accuracy Score\n",
-    "from sklearn.metrics import accuracy_score\n",
-    "acc = accuracy_score(ytest,ypred_test)\n",
-    "print(f'Accuracy on Final Voting Classifier model is {acc*100:.2f}%')\n",
-    "Accuracy on Final Voting Classifier model is 100.00%"
-   ]
-  }
- ],
- "metadata": {
-  "kernelspec": {
-   "display_name": "Python 3 (ipykernel)",
-   "language": "python",
-   "name": "python3"
-  },
-  "language_info": {
-   "codemirror_mode": {
-    "name": "ipython",
-    "version": 3
-   },
-   "file_extension": ".py",
-   "mimetype": "text/x-python",
-   "name": "python",
-   "nbconvert_exporter": "python",
-   "pygments_lexer": "ipython3",
-   "version": "3.10.8"
-  }
- },
- "nbformat": 4,
- "nbformat_minor": 5
+Question 1 : You are working on machine learning project where you have containing numerical and categorical features. You have identified that some features are highly correlated and there are missing values in some of the columns. You want to build a pipeline that automates feature engineering process and handles missing values.
+Design a Pipeline that includes following steps:
+Use an automated method to identify important features of dataset
+Use a numerical pipeline that includes following steps:
+Impute missing values in numeric columns with mean
+Scale the numerical columns using standardisation
+Create a categorical pipeline that includes following steps:
+Impute missing values in categorical columns with most frequent data
+One Hot Encode the categorical columns
+Combine the numerical and categorical pipelines using a ColumnTransformer
+Use Random Forest Classifier to build final model
+Evaluate accuracy of model on the test dataset
+Note : Your Solution should include code snippets for each step of pipeline and a brief explaination of each step. You should also provide an interpretation of results and suggest possible improvements for pipeline
+Answer :
+Used Employee Attrition dataset for performing above tasks
+Dataset link : https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset/
+
+Uncover the factors that lead to employee attrition and explore important questions such as ‘show me a breakdown of distance from home by job role and attrition’ or ‘compare average monthly income by education and attrition’.
+
+Read the dataset
+import pandas as pd
+df = pd.read_csv('Attrition.csv')
+df.head()
+Age	Attrition	BusinessTravel	DailyRate	Department	DistanceFromHome	Education	EducationField	EmployeeCount	EmployeeNumber	...	RelationshipSatisfaction	StandardHours	StockOptionLevel	TotalWorkingYears	TrainingTimesLastYear	WorkLifeBalance	YearsAtCompany	YearsInCurrentRole	YearsSinceLastPromotion	YearsWithCurrManager
+0	41	Yes	Travel_Rarely	1102	Sales	1	2	Life Sciences	1	1	...	1	80	0	8	0	1	6	4	0	5
+1	49	No	Travel_Frequently	279	Research & Development	8	1	Life Sciences	1	2	...	4	80	1	10	3	3	10	7	1	7
+2	37	Yes	Travel_Rarely	1373	Research & Development	2	2	Other	1	4	...	2	80	0	7	3	3	0	0	0	0
+3	33	No	Travel_Frequently	1392	Research & Development	3	4	Life Sciences	1	5	...	3	80	0	8	3	3	8	7	3	0
+4	27	No	Travel_Rarely	591	Research & Development	2	1	Medical	1	7	...	4	80	1	6	3	3	2	2	2	2
+5 rows × 35 columns
+
+df.shape
+(1470, 35)
+# Checking dataset info
+df.info()
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 1470 entries, 0 to 1469
+Data columns (total 35 columns):
+ #   Column                    Non-Null Count  Dtype 
+---  ------                    --------------  ----- 
+ 0   Age                       1470 non-null   int64 
+ 1   Attrition                 1470 non-null   object
+ 2   BusinessTravel            1470 non-null   object
+ 3   DailyRate                 1470 non-null   int64 
+ 4   Department                1470 non-null   object
+ 5   DistanceFromHome          1470 non-null   int64 
+ 6   Education                 1470 non-null   int64 
+ 7   EducationField            1470 non-null   object
+ 8   EmployeeCount             1470 non-null   int64 
+ 9   EmployeeNumber            1470 non-null   int64 
+ 10  EnvironmentSatisfaction   1470 non-null   int64 
+ 11  Gender                    1470 non-null   object
+ 12  HourlyRate                1470 non-null   int64 
+ 13  JobInvolvement            1470 non-null   int64 
+ 14  JobLevel                  1470 non-null   int64 
+ 15  JobRole                   1470 non-null   object
+ 16  JobSatisfaction           1470 non-null   int64 
+ 17  MaritalStatus             1470 non-null   object
+ 18  MonthlyIncome             1470 non-null   int64 
+ 19  MonthlyRate               1470 non-null   int64 
+ 20  NumCompaniesWorked        1470 non-null   int64 
+ 21  Over18                    1470 non-null   object
+ 22  OverTime                  1470 non-null   object
+ 23  PercentSalaryHike         1470 non-null   int64 
+ 24  PerformanceRating         1470 non-null   int64 
+ 25  RelationshipSatisfaction  1470 non-null   int64 
+ 26  StandardHours             1470 non-null   int64 
+ 27  StockOptionLevel          1470 non-null   int64 
+ 28  TotalWorkingYears         1470 non-null   int64 
+ 29  TrainingTimesLastYear     1470 non-null   int64 
+ 30  WorkLifeBalance           1470 non-null   int64 
+ 31  YearsAtCompany            1470 non-null   int64 
+ 32  YearsInCurrentRole        1470 non-null   int64 
+ 33  YearsSinceLastPromotion   1470 non-null   int64 
+ 34  YearsWithCurrManager      1470 non-null   int64 
+dtypes: int64(26), object(9)
+memory usage: 402.1+ KB
+# Checking missing values in dataset 
+df.isnull().sum()
+Age                         0
+Attrition                   0
+BusinessTravel              0
+DailyRate                   0
+Department                  0
+DistanceFromHome            0
+Education                   0
+EducationField              0
+EmployeeCount               0
+EmployeeNumber              0
+EnvironmentSatisfaction     0
+Gender                      0
+HourlyRate                  0
+JobInvolvement              0
+JobLevel                    0
+JobRole                     0
+JobSatisfaction             0
+MaritalStatus               0
+MonthlyIncome               0
+MonthlyRate                 0
+NumCompaniesWorked          0
+Over18                      0
+OverTime                    0
+PercentSalaryHike           0
+PerformanceRating           0
+RelationshipSatisfaction    0
+StandardHours               0
+StockOptionLevel            0
+TotalWorkingYears           0
+TrainingTimesLastYear       0
+WorkLifeBalance             0
+YearsAtCompany              0
+YearsInCurrentRole          0
+YearsSinceLastPromotion     0
+YearsWithCurrManager        0
+dtype: int64
+No Missing values found in dataset
+Seperate X and Y
+X = df.drop(labels=['Attrition'],axis=1)
+Y = df[['Attrition']]
+Y.head()
+Attrition
+0	Yes
+1	No
+2	Yes
+3	No
+4	No
+y_mapper = {'Yes':1,'No':0}
+Y = Y.replace(y_mapper)
+Y.head()
+Attrition
+0	1
+1	0
+2	1
+3	0
+4	0
+cat_cols = list(X.select_dtypes(include='object').columns)
+num_cols = list(X.select_dtypes(exclude='object').columns)
+cat_cols
+['BusinessTravel',
+ 'Department',
+ 'EducationField',
+ 'Gender',
+ 'JobRole',
+ 'MaritalStatus',
+ 'Over18',
+ 'OverTime']
+num_cols
+['Age',
+ 'DailyRate',
+ 'DistanceFromHome',
+ 'Education',
+ 'EmployeeCount',
+ 'EmployeeNumber',
+ 'EnvironmentSatisfaction',
+ 'HourlyRate',
+ 'JobInvolvement',
+ 'JobLevel',
+ 'JobSatisfaction',
+ 'MonthlyIncome',
+ 'MonthlyRate',
+ 'NumCompaniesWorked',
+ 'PercentSalaryHike',
+ 'PerformanceRating',
+ 'RelationshipSatisfaction',
+ 'StandardHours',
+ 'StockOptionLevel',
+ 'TotalWorkingYears',
+ 'TrainingTimesLastYear',
+ 'WorkLifeBalance',
+ 'YearsAtCompany',
+ 'YearsInCurrentRole',
+ 'YearsSinceLastPromotion',
+ 'YearsWithCurrManager']
+len(num_cols)
+26
+Feature selection for numerical columns
+from warnings import filterwarnings
+filterwarnings('ignore')
+from sklearn.feature_selection import SelectKBest, f_classif
+X_num = X[num_cols]
+k_best_numerical = SelectKBest(f_classif,k=10)
+k_best_numerical.fit_transform(X_num,Y)
+selected_num_features = list(X_num.columns[k_best_numerical.get_support()])
+selected_num_features
+['Age',
+ 'JobInvolvement',
+ 'JobLevel',
+ 'JobSatisfaction',
+ 'MonthlyIncome',
+ 'StockOptionLevel',
+ 'TotalWorkingYears',
+ 'YearsAtCompany',
+ 'YearsInCurrentRole',
+ 'YearsWithCurrManager']
+Feature Selection for categorical variables
+from sklearn.feature_selection import SelectKBest, chi2
+X_cat = X[cat_cols]
+from sklearn.preprocessing import OrdinalEncoder
+oe = OrdinalEncoder()
+X_cat_encoded = pd.DataFrame(oe.fit_transform(X_cat),columns=oe.get_feature_names_out())
+k_best_categorical = SelectKBest(chi2,k=5)
+k_best_categorical.fit_transform(X_cat_encoded,Y)
+selected_cat_features = list(X_cat_encoded.columns[k_best_categorical.get_support()])
+selected_cat_features
+['Department', 'EducationField', 'JobRole', 'MaritalStatus', 'OverTime']
+selected_features = selected_num_features + selected_cat_features
+selected_features
+['Age',
+ 'JobInvolvement',
+ 'JobLevel',
+ 'JobSatisfaction',
+ 'MonthlyIncome',
+ 'StockOptionLevel',
+ 'TotalWorkingYears',
+ 'YearsAtCompany',
+ 'YearsInCurrentRole',
+ 'YearsWithCurrManager',
+ 'Department',
+ 'EducationField',
+ 'JobRole',
+ 'MaritalStatus',
+ 'OverTime']
+X_selected = X[selected_features]
+X_selected.head()
+Age	JobInvolvement	JobLevel	JobSatisfaction	MonthlyIncome	StockOptionLevel	TotalWorkingYears	YearsAtCompany	YearsInCurrentRole	YearsWithCurrManager	Department	EducationField	JobRole	MaritalStatus	OverTime
+0	41	3	2	4	5993	0	8	6	4	5	Sales	Life Sciences	Sales Executive	Single	Yes
+1	49	2	2	2	5130	1	10	10	7	7	Research & Development	Life Sciences	Research Scientist	Married	No
+2	37	2	1	3	2090	0	7	0	0	0	Research & Development	Other	Laboratory Technician	Single	Yes
+3	33	3	1	3	2909	0	8	8	7	0	Research & Development	Life Sciences	Research Scientist	Married	Yes
+4	27	3	1	2	3468	1	6	2	2	2	Research & Development	Medical	Laboratory Technician	Married	No
+X_selected.shape
+(1470, 15)
+Feature Selection is completed
+Train Test Split of data
+from sklearn.model_selection import train_test_split
+xtrain, xtest, ytrain, ytest = train_test_split(X_selected,Y,test_size=0.2,random_state=42,stratify=Y)
+xtrain.shape
+(1176, 15)
+xtest.shape
+(294, 15)
+ytrain.value_counts()
+Attrition
+0            986
+1            190
+dtype: int64
+ytest.value_counts()
+Attrition
+0            247
+1             47
+dtype: int64
+Creating numeric and categorical pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder,StandardScaler
+
+# Numeric Pipeline creation
+num_pipeline = Pipeline(steps=[('imputer',SimpleImputer(strategy='mean')),
+                               ('scaler',StandardScaler())])
+
+# Categorical Pipeline creation
+cat_pipeline = Pipeline(steps=[('imputer',SimpleImputer(strategy='most_frequent')),
+                               ('one_hot_encoder',OneHotEncoder()),
+                               ('scaler',StandardScaler(with_mean=False))])
+ColumnTransformer to combine numeric and Categorical pipelines
+selected_num_features
+['Age',
+ 'JobInvolvement',
+ 'JobLevel',
+ 'JobSatisfaction',
+ 'MonthlyIncome',
+ 'StockOptionLevel',
+ 'TotalWorkingYears',
+ 'YearsAtCompany',
+ 'YearsInCurrentRole',
+ 'YearsWithCurrManager']
+selected_cat_features
+['Department', 'EducationField', 'JobRole', 'MaritalStatus', 'OverTime']
+from sklearn.compose import ColumnTransformer
+preprocessor = ColumnTransformer([('num_pipeline',num_pipeline,selected_num_features),
+                                  ('cat_pipeline',cat_pipeline,selected_cat_features)])
+Transform the dataset with ColumnTransformer
+xtrain_transformed = pd.DataFrame(preprocessor.fit_transform(xtrain),columns=preprocessor.get_feature_names_out())
+xtest_transformed = pd.DataFrame(preprocessor.transform(xtest),columns=preprocessor.get_feature_names_out())
+preprocessor.get_feature_names_out()
+array(['num_pipeline__Age', 'num_pipeline__JobInvolvement',
+       'num_pipeline__JobLevel', 'num_pipeline__JobSatisfaction',
+       'num_pipeline__MonthlyIncome', 'num_pipeline__StockOptionLevel',
+       'num_pipeline__TotalWorkingYears', 'num_pipeline__YearsAtCompany',
+       'num_pipeline__YearsInCurrentRole',
+       'num_pipeline__YearsWithCurrManager',
+       'cat_pipeline__Department_Human Resources',
+       'cat_pipeline__Department_Research & Development',
+       'cat_pipeline__Department_Sales',
+       'cat_pipeline__EducationField_Human Resources',
+       'cat_pipeline__EducationField_Life Sciences',
+       'cat_pipeline__EducationField_Marketing',
+       'cat_pipeline__EducationField_Medical',
+       'cat_pipeline__EducationField_Other',
+       'cat_pipeline__EducationField_Technical Degree',
+       'cat_pipeline__JobRole_Healthcare Representative',
+       'cat_pipeline__JobRole_Human Resources',
+       'cat_pipeline__JobRole_Laboratory Technician',
+       'cat_pipeline__JobRole_Manager',
+       'cat_pipeline__JobRole_Manufacturing Director',
+       'cat_pipeline__JobRole_Research Director',
+       'cat_pipeline__JobRole_Research Scientist',
+       'cat_pipeline__JobRole_Sales Executive',
+       'cat_pipeline__JobRole_Sales Representative',
+       'cat_pipeline__MaritalStatus_Divorced',
+       'cat_pipeline__MaritalStatus_Married',
+       'cat_pipeline__MaritalStatus_Single', 'cat_pipeline__OverTime_No',
+       'cat_pipeline__OverTime_Yes'], dtype=object)
+xtrain_transformed.head()
+num_pipeline__Age	num_pipeline__JobInvolvement	num_pipeline__JobLevel	num_pipeline__JobSatisfaction	num_pipeline__MonthlyIncome	num_pipeline__StockOptionLevel	num_pipeline__TotalWorkingYears	num_pipeline__YearsAtCompany	num_pipeline__YearsInCurrentRole	num_pipeline__YearsWithCurrManager	...	cat_pipeline__JobRole_Manufacturing Director	cat_pipeline__JobRole_Research Director	cat_pipeline__JobRole_Research Scientist	cat_pipeline__JobRole_Sales Executive	cat_pipeline__JobRole_Sales Representative	cat_pipeline__MaritalStatus_Divorced	cat_pipeline__MaritalStatus_Married	cat_pipeline__MaritalStatus_Single	cat_pipeline__OverTime_No	cat_pipeline__OverTime_Yes
+0	1.090194	1.795282	1.762189	-0.647997	2.026752	2.613100	2.261482	-0.665706	-0.625365	-0.616406	...	0.0	0.0	0.0	0.0	0.000000	2.399905	0.000000	0.0	2.205793	0.000000
+1	-1.634828	0.373564	-0.986265	1.153526	-0.864408	0.247430	-1.072675	-0.830071	-0.905635	-0.897047	...	0.0	0.0	0.0	0.0	0.000000	0.000000	2.006697	0.0	2.205793	0.000000
+2	0.981193	0.373564	1.762189	0.252765	2.347706	0.247430	1.492061	0.813578	1.336527	1.348076	...	0.0	0.0	0.0	0.0	0.000000	0.000000	2.006697	0.0	2.205793	0.000000
+3	-1.307825	0.373564	-0.986265	0.252765	-0.956202	-0.935405	-0.559727	-0.008246	-0.064824	0.506155	...	0.0	0.0	0.0	0.0	4.544641	0.000000	2.006697	0.0	2.205793	0.000000
+4	0.654191	0.373564	-0.070114	0.252765	-0.185956	0.247430	-0.175017	0.156119	0.775986	0.786795	...	0.0	0.0	0.0	0.0	0.000000	2.399905	0.000000	0.0	0.000000	2.205793
+5 rows × 33 columns
+
+xtest_transformed.head()
+num_pipeline__Age	num_pipeline__JobInvolvement	num_pipeline__JobLevel	num_pipeline__JobSatisfaction	num_pipeline__MonthlyIncome	num_pipeline__StockOptionLevel	num_pipeline__TotalWorkingYears	num_pipeline__YearsAtCompany	num_pipeline__YearsInCurrentRole	num_pipeline__YearsWithCurrManager	...	cat_pipeline__JobRole_Manufacturing Director	cat_pipeline__JobRole_Research Director	cat_pipeline__JobRole_Research Scientist	cat_pipeline__JobRole_Sales Executive	cat_pipeline__JobRole_Sales Representative	cat_pipeline__MaritalStatus_Divorced	cat_pipeline__MaritalStatus_Married	cat_pipeline__MaritalStatus_Single	cat_pipeline__OverTime_No	cat_pipeline__OverTime_Yes
+0	-1.416826	0.373564	-0.986265	-0.647997	-0.969745	0.247430	-1.329148	-0.994436	-1.185905	-1.177687	...	0.0	0.0	0.000000	0.0	4.544641	0.000000	2.006697	0.0	2.205793	0.000000
+1	0.763191	1.795282	-0.986265	1.153526	-0.974474	0.247430	-0.175017	0.484849	0.215446	0.786795	...	0.0	0.0	2.564289	0.0	0.000000	0.000000	2.006697	0.0	2.205793	0.000000
+2	-0.653820	-1.048155	0.846038	1.153526	1.077650	0.247430	-0.175017	-0.336976	-0.064824	-0.897047	...	0.0	0.0	0.000000	0.0	0.000000	2.399905	0.000000	0.0	2.205793	0.000000
+3	0.763191	1.795282	2.678340	-1.548758	2.718533	1.430265	1.876772	2.950322	1.336527	2.470637	...	0.0	0.0	0.000000	0.0	0.000000	2.399905	0.000000	0.0	2.205793	0.000000
+4	-0.108815	-1.048155	-0.986265	0.252765	-0.678457	0.247430	-1.200911	-0.994436	-1.185905	-1.177687	...	0.0	0.0	2.564289	0.0	0.000000	0.000000	2.006697	0.0	0.000000	2.205793
+5 rows × 33 columns
+
+Training Random Forest
+from sklearn.ensemble import RandomForestClassifier
+rfc = RandomForestClassifier(n_estimators=100,max_depth=8,random_state=21)
+rfc.fit(xtrain_transformed,ytrain)
+RandomForestClassifier(max_depth=8, random_state=21)
+In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook.
+On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+skf = StratifiedKFold(n_splits=5, shuffle=True)
+scores = cross_val_score(rfc,xtrain_transformed,ytrain,cv=skf,scoring='accuracy')
+scores
+array([0.84322034, 0.84255319, 0.85957447, 0.86382979, 0.86808511])
+import numpy as np
+np.mean(scores)
+0.855452578434908
+Hyperparameter Tuning
+parameters = {
+    'n_estimators':[10,50,100,200,300,400],
+    'max_depth':[4,5,6,7,8,9,10],
+    'min_samples_leaf':[2,3,4,5,6],
+    'min_samples_split':[2,5,10]
 }
+from sklearn.model_selection import RandomizedSearchCV
+rscv = RandomizedSearchCV(RandomForestClassifier(),
+                          param_distributions=parameters,
+                          cv=skf,
+                          n_iter=50,
+                          scoring='accuracy',
+                          verbose=3)
+rscv.fit(xtrain_transformed,ytrain)
+Fitting 5 folds for each of 50 candidates, totalling 250 fits
+[CV 1/5] END max_depth=10, min_samples_leaf=5, min_samples_split=10, n_estimators=300;, score=0.852 total time=   0.4s
+[CV 2/5] END max_depth=10, min_samples_leaf=5, min_samples_split=10, n_estimators=300;, score=0.864 total time=   0.4s
+[CV 3/5] END max_depth=10, min_samples_leaf=5, min_samples_split=10, n_estimators=300;, score=0.851 total time=   0.4s
+[CV 4/5] END max_depth=10, min_samples_leaf=5, min_samples_split=10, n_estimators=300;, score=0.860 total time=   0.4s
+[CV 5/5] END max_depth=10, min_samples_leaf=5, min_samples_split=10, n_estimators=300;, score=0.860 total time=   0.5s
+[CV 1/5] END max_depth=8, min_samples_leaf=6, min_samples_split=10, n_estimators=200;, score=0.864 total time=   0.3s
+[CV 2/5] END max_depth=8, min_samples_leaf=6, min_samples_split=10, n_estimators=200;, score=0.860 total time=   0.3s
+[CV 3/5] END max_depth=8, min_samples_leaf=6, min_samples_split=10, n_estimators=200;, score=0.855 total time=   0.3s
+[CV 4/5] END max_depth=8, min_samples_leaf=6, min_samples_split=10, n_estimators=200;, score=0.860 total time=   0.3s
+[CV 5/5] END max_depth=8, min_samples_leaf=6, min_samples_split=10, n_estimators=200;, score=0.860 total time=   0.2s
+[CV 1/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.864 total time=   0.0s
+[CV 2/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.860 total time=   0.0s
+[CV 3/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.851 total time=   0.0s
+[CV 4/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.847 total time=   0.0s
+[CV 5/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.860 total time=   0.0s
+[CV 1/5] END max_depth=6, min_samples_leaf=6, min_samples_split=2, n_estimators=10;, score=0.869 total time=   0.0s
+[CV 2/5] END max_depth=6, min_samples_leaf=6, min_samples_split=2, n_estimators=10;, score=0.855 total time=   0.0s
+[CV 3/5] END max_depth=6, min_samples_leaf=6, min_samples_split=2, n_estimators=10;, score=0.851 total time=   0.0s
+[CV 4/5] END max_depth=6, min_samples_leaf=6, min_samples_split=2, n_estimators=10;, score=0.860 total time=   0.0s
+[CV 5/5] END max_depth=6, min_samples_leaf=6, min_samples_split=2, n_estimators=10;, score=0.860 total time=   0.0s
+[CV 1/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=200;, score=0.856 total time=   0.2s
+[CV 2/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=200;, score=0.860 total time=   0.2s
+[CV 3/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=200;, score=0.855 total time=   0.3s
+[CV 4/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=200;, score=0.843 total time=   0.2s
+[CV 5/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=200;, score=0.860 total time=   0.2s
+[CV 1/5] END max_depth=10, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.869 total time=   0.4s
+[CV 2/5] END max_depth=10, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.860 total time=   0.4s
+[CV 3/5] END max_depth=10, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.851 total time=   0.5s
+[CV 4/5] END max_depth=10, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.851 total time=   0.4s
+[CV 5/5] END max_depth=10, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.864 total time=   0.5s
+[CV 1/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.864 total time=   0.4s
+[CV 2/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.864 total time=   0.4s
+[CV 3/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.860 total time=   0.5s
+[CV 4/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.851 total time=   0.4s
+[CV 5/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=300;, score=0.860 total time=   0.4s
+[CV 1/5] END max_depth=9, min_samples_leaf=3, min_samples_split=2, n_estimators=100;, score=0.873 total time=   0.1s
+[CV 2/5] END max_depth=9, min_samples_leaf=3, min_samples_split=2, n_estimators=100;, score=0.864 total time=   0.1s
+[CV 3/5] END max_depth=9, min_samples_leaf=3, min_samples_split=2, n_estimators=100;, score=0.855 total time=   0.1s
+[CV 4/5] END max_depth=9, min_samples_leaf=3, min_samples_split=2, n_estimators=100;, score=0.860 total time=   0.1s
+[CV 5/5] END max_depth=9, min_samples_leaf=3, min_samples_split=2, n_estimators=100;, score=0.864 total time=   0.1s
+[CV 1/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.864 total time=   0.2s
+[CV 2/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.864 total time=   0.3s
+[CV 3/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.855 total time=   0.3s
+[CV 4/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.851 total time=   0.3s
+[CV 5/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.860 total time=   0.3s
+[CV 1/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=100;, score=0.860 total time=   0.1s
+[CV 2/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=100;, score=0.860 total time=   0.1s
+[CV 3/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=100;, score=0.864 total time=   0.1s
+[CV 4/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=100;, score=0.851 total time=   0.2s
+[CV 5/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=100;, score=0.860 total time=   0.1s
+[CV 1/5] END max_depth=9, min_samples_leaf=5, min_samples_split=2, n_estimators=50;, score=0.869 total time=   0.0s
+[CV 2/5] END max_depth=9, min_samples_leaf=5, min_samples_split=2, n_estimators=50;, score=0.855 total time=   0.0s
+[CV 3/5] END max_depth=9, min_samples_leaf=5, min_samples_split=2, n_estimators=50;, score=0.851 total time=   0.0s
+[CV 4/5] END max_depth=9, min_samples_leaf=5, min_samples_split=2, n_estimators=50;, score=0.843 total time=   0.0s
+[CV 5/5] END max_depth=9, min_samples_leaf=5, min_samples_split=2, n_estimators=50;, score=0.860 total time=   0.0s
+[CV 1/5] END max_depth=5, min_samples_leaf=2, min_samples_split=10, n_estimators=100;, score=0.856 total time=   0.1s
+[CV 2/5] END max_depth=5, min_samples_leaf=2, min_samples_split=10, n_estimators=100;, score=0.860 total time=   0.1s
+[CV 3/5] END max_depth=5, min_samples_leaf=2, min_samples_split=10, n_estimators=100;, score=0.855 total time=   0.1s
+[CV 4/5] END max_depth=5, min_samples_leaf=2, min_samples_split=10, n_estimators=100;, score=0.855 total time=   0.1s
+[CV 5/5] END max_depth=5, min_samples_leaf=2, min_samples_split=10, n_estimators=100;, score=0.864 total time=   0.1s
+[CV 1/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.856 total time=   0.5s
+[CV 2/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.860 total time=   0.5s
+[CV 3/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.855 total time=   0.5s
+[CV 4/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.847 total time=   0.5s
+[CV 5/5] END max_depth=5, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.860 total time=   0.5s
+[CV 1/5] END max_depth=10, min_samples_leaf=3, min_samples_split=2, n_estimators=300;, score=0.864 total time=   0.5s
+[CV 2/5] END max_depth=10, min_samples_leaf=3, min_samples_split=2, n_estimators=300;, score=0.860 total time=   0.4s
+[CV 3/5] END max_depth=10, min_samples_leaf=3, min_samples_split=2, n_estimators=300;, score=0.847 total time=   0.5s
+[CV 4/5] END max_depth=10, min_samples_leaf=3, min_samples_split=2, n_estimators=300;, score=0.855 total time=   0.5s
+[CV 5/5] END max_depth=10, min_samples_leaf=3, min_samples_split=2, n_estimators=300;, score=0.860 total time=   0.5s
+[CV 1/5] END max_depth=7, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.860 total time=   0.2s
+[CV 2/5] END max_depth=7, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.855 total time=   0.2s
+[CV 3/5] END max_depth=7, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.847 total time=   0.2s
+[CV 4/5] END max_depth=7, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.860 total time=   0.3s
+[CV 5/5] END max_depth=7, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.864 total time=   0.3s
+[CV 1/5] END max_depth=9, min_samples_leaf=2, min_samples_split=10, n_estimators=50;, score=0.869 total time=   0.0s
+[CV 2/5] END max_depth=9, min_samples_leaf=2, min_samples_split=10, n_estimators=50;, score=0.868 total time=   0.0s
+[CV 3/5] END max_depth=9, min_samples_leaf=2, min_samples_split=10, n_estimators=50;, score=0.847 total time=   0.0s
+[CV 4/5] END max_depth=9, min_samples_leaf=2, min_samples_split=10, n_estimators=50;, score=0.851 total time=   0.0s
+[CV 5/5] END max_depth=9, min_samples_leaf=2, min_samples_split=10, n_estimators=50;, score=0.864 total time=   0.0s
+[CV 1/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=50;, score=0.869 total time=   0.0s
+[CV 2/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=50;, score=0.855 total time=   0.0s
+[CV 3/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=50;, score=0.855 total time=   0.0s
+[CV 4/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=50;, score=0.847 total time=   0.0s
+[CV 5/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=50;, score=0.864 total time=   0.0s
+[CV 1/5] END max_depth=7, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.860 total time=   0.3s
+[CV 2/5] END max_depth=7, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.864 total time=   0.2s
+[CV 3/5] END max_depth=7, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.855 total time=   0.2s
+[CV 4/5] END max_depth=7, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.851 total time=   0.3s
+[CV 5/5] END max_depth=7, min_samples_leaf=5, min_samples_split=5, n_estimators=200;, score=0.860 total time=   0.3s
+[CV 1/5] END max_depth=6, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.864 total time=   0.4s
+[CV 2/5] END max_depth=6, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.860 total time=   0.4s
+[CV 3/5] END max_depth=6, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.855 total time=   0.4s
+[CV 4/5] END max_depth=6, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.847 total time=   0.4s
+[CV 5/5] END max_depth=6, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.864 total time=   0.4s
+[CV 1/5] END max_depth=10, min_samples_leaf=3, min_samples_split=10, n_estimators=100;, score=0.864 total time=   0.1s
+[CV 2/5] END max_depth=10, min_samples_leaf=3, min_samples_split=10, n_estimators=100;, score=0.860 total time=   0.1s
+[CV 3/5] END max_depth=10, min_samples_leaf=3, min_samples_split=10, n_estimators=100;, score=0.851 total time=   0.1s
+[CV 4/5] END max_depth=10, min_samples_leaf=3, min_samples_split=10, n_estimators=100;, score=0.860 total time=   0.1s
+[CV 5/5] END max_depth=10, min_samples_leaf=3, min_samples_split=10, n_estimators=100;, score=0.864 total time=   0.1s
+[CV 1/5] END max_depth=9, min_samples_leaf=4, min_samples_split=5, n_estimators=400;, score=0.864 total time=   0.6s
+[CV 2/5] END max_depth=9, min_samples_leaf=4, min_samples_split=5, n_estimators=400;, score=0.855 total time=   0.6s
+[CV 3/5] END max_depth=9, min_samples_leaf=4, min_samples_split=5, n_estimators=400;, score=0.851 total time=   0.6s
+[CV 4/5] END max_depth=9, min_samples_leaf=4, min_samples_split=5, n_estimators=400;, score=0.851 total time=   0.6s
+[CV 5/5] END max_depth=9, min_samples_leaf=4, min_samples_split=5, n_estimators=400;, score=0.864 total time=   0.6s
+[CV 1/5] END max_depth=9, min_samples_leaf=3, min_samples_split=5, n_estimators=10;, score=0.869 total time=   0.0s
+[CV 2/5] END max_depth=9, min_samples_leaf=3, min_samples_split=5, n_estimators=10;, score=0.855 total time=   0.0s
+[CV 3/5] END max_depth=9, min_samples_leaf=3, min_samples_split=5, n_estimators=10;, score=0.847 total time=   0.0s
+[CV 4/5] END max_depth=9, min_samples_leaf=3, min_samples_split=5, n_estimators=10;, score=0.847 total time=   0.0s
+[CV 5/5] END max_depth=9, min_samples_leaf=3, min_samples_split=5, n_estimators=10;, score=0.872 total time=   0.0s
+[CV 1/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=300;, score=0.856 total time=   0.4s
+[CV 2/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=300;, score=0.855 total time=   0.4s
+[CV 3/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=300;, score=0.851 total time=   0.4s
+[CV 4/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=300;, score=0.851 total time=   0.4s
+[CV 5/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=300;, score=0.864 total time=   0.4s
+[CV 1/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=100;, score=0.860 total time=   0.1s
+[CV 2/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=100;, score=0.855 total time=   0.1s
+[CV 3/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=100;, score=0.851 total time=   0.1s
+[CV 4/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=100;, score=0.851 total time=   0.1s
+[CV 5/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=100;, score=0.860 total time=   0.1s
+[CV 1/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=300;, score=0.864 total time=   0.5s
+[CV 2/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=300;, score=0.864 total time=   0.5s
+[CV 3/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=300;, score=0.847 total time=   0.5s
+[CV 4/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=300;, score=0.847 total time=   0.5s
+[CV 5/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=300;, score=0.860 total time=   0.5s
+[CV 1/5] END max_depth=6, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.856 total time=   0.1s
+[CV 2/5] END max_depth=6, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.864 total time=   0.1s
+[CV 3/5] END max_depth=6, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.860 total time=   0.1s
+[CV 4/5] END max_depth=6, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.855 total time=   0.1s
+[CV 5/5] END max_depth=6, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.864 total time=   0.1s
+[CV 1/5] END max_depth=10, min_samples_leaf=6, min_samples_split=2, n_estimators=400;, score=0.864 total time=   0.6s
+[CV 2/5] END max_depth=10, min_samples_leaf=6, min_samples_split=2, n_estimators=400;, score=0.864 total time=   0.6s
+[CV 3/5] END max_depth=10, min_samples_leaf=6, min_samples_split=2, n_estimators=400;, score=0.855 total time=   0.6s
+[CV 4/5] END max_depth=10, min_samples_leaf=6, min_samples_split=2, n_estimators=400;, score=0.851 total time=   0.6s
+[CV 5/5] END max_depth=10, min_samples_leaf=6, min_samples_split=2, n_estimators=400;, score=0.860 total time=   0.6s
+[CV 1/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.856 total time=   0.4s
+[CV 2/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.855 total time=   0.4s
+[CV 3/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.855 total time=   0.4s
+[CV 4/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.851 total time=   0.4s
+[CV 5/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=300;, score=0.860 total time=   0.4s
+[CV 1/5] END max_depth=4, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.864 total time=   0.0s
+[CV 2/5] END max_depth=4, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.851 total time=   0.0s
+[CV 3/5] END max_depth=4, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.855 total time=   0.0s
+[CV 4/5] END max_depth=4, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.843 total time=   0.0s
+[CV 5/5] END max_depth=4, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.860 total time=   0.0s
+[CV 1/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.852 total time=   0.0s
+[CV 2/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.860 total time=   0.0s
+[CV 3/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.851 total time=   0.0s
+[CV 4/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.855 total time=   0.0s
+[CV 5/5] END max_depth=6, min_samples_leaf=2, min_samples_split=5, n_estimators=50;, score=0.860 total time=   0.0s
+[CV 1/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=400;, score=0.869 total time=   0.5s
+[CV 2/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=400;, score=0.855 total time=   0.5s
+[CV 3/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=400;, score=0.855 total time=   0.5s
+[CV 4/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=400;, score=0.843 total time=   0.5s
+[CV 5/5] END max_depth=4, min_samples_leaf=3, min_samples_split=2, n_estimators=400;, score=0.864 total time=   0.5s
+[CV 1/5] END max_depth=7, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.860 total time=   0.1s
+[CV 2/5] END max_depth=7, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.855 total time=   0.1s
+[CV 3/5] END max_depth=7, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.864 total time=   0.1s
+[CV 4/5] END max_depth=7, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.855 total time=   0.1s
+[CV 5/5] END max_depth=7, min_samples_leaf=5, min_samples_split=10, n_estimators=100;, score=0.860 total time=   0.1s
+[CV 1/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=100;, score=0.877 total time=   0.1s
+[CV 2/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=100;, score=0.855 total time=   0.1s
+[CV 3/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=100;, score=0.855 total time=   0.1s
+[CV 4/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=100;, score=0.851 total time=   0.1s
+[CV 5/5] END max_depth=5, min_samples_leaf=2, min_samples_split=5, n_estimators=100;, score=0.855 total time=   0.1s
+[CV 1/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=100;, score=0.856 total time=   0.1s
+[CV 2/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=100;, score=0.860 total time=   0.1s
+[CV 3/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=100;, score=0.851 total time=   0.1s
+[CV 4/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=100;, score=0.851 total time=   0.1s
+[CV 5/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=100;, score=0.864 total time=   0.1s
+[CV 1/5] END max_depth=4, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.864 total time=   0.0s
+[CV 2/5] END max_depth=4, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.860 total time=   0.0s
+[CV 3/5] END max_depth=4, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.855 total time=   0.1s
+[CV 4/5] END max_depth=4, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.855 total time=   0.0s
+[CV 5/5] END max_depth=4, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.855 total time=   0.1s
+[CV 1/5] END max_depth=4, min_samples_leaf=3, min_samples_split=10, n_estimators=200;, score=0.864 total time=   0.2s
+[CV 2/5] END max_depth=4, min_samples_leaf=3, min_samples_split=10, n_estimators=200;, score=0.860 total time=   0.2s
+[CV 3/5] END max_depth=4, min_samples_leaf=3, min_samples_split=10, n_estimators=200;, score=0.851 total time=   0.2s
+[CV 4/5] END max_depth=4, min_samples_leaf=3, min_samples_split=10, n_estimators=200;, score=0.847 total time=   0.2s
+[CV 5/5] END max_depth=4, min_samples_leaf=3, min_samples_split=10, n_estimators=200;, score=0.855 total time=   0.2s
+[CV 1/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=10;, score=0.873 total time=   0.0s
+[CV 2/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=10;, score=0.855 total time=   0.0s
+[CV 3/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=10;, score=0.860 total time=   0.0s
+[CV 4/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=10;, score=0.834 total time=   0.0s
+[CV 5/5] END max_depth=9, min_samples_leaf=4, min_samples_split=2, n_estimators=10;, score=0.855 total time=   0.0s
+[CV 1/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=200;, score=0.856 total time=   0.2s
+[CV 2/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=200;, score=0.864 total time=   0.2s
+[CV 3/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=200;, score=0.855 total time=   0.2s
+[CV 4/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=200;, score=0.851 total time=   0.2s
+[CV 5/5] END max_depth=8, min_samples_leaf=4, min_samples_split=10, n_estimators=200;, score=0.855 total time=   0.2s
+[CV 1/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=400;, score=0.856 total time=   0.6s
+[CV 2/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=400;, score=0.864 total time=   0.6s
+[CV 3/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=400;, score=0.851 total time=   0.6s
+[CV 4/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=400;, score=0.855 total time=   0.6s
+[CV 5/5] END max_depth=10, min_samples_leaf=4, min_samples_split=2, n_estimators=400;, score=0.864 total time=   0.6s
+[CV 1/5] END max_depth=6, min_samples_leaf=2, min_samples_split=2, n_estimators=10;, score=0.852 total time=   0.0s
+[CV 2/5] END max_depth=6, min_samples_leaf=2, min_samples_split=2, n_estimators=10;, score=0.851 total time=   0.0s
+[CV 3/5] END max_depth=6, min_samples_leaf=2, min_samples_split=2, n_estimators=10;, score=0.855 total time=   0.0s
+[CV 4/5] END max_depth=6, min_samples_leaf=2, min_samples_split=2, n_estimators=10;, score=0.834 total time=   0.0s
+[CV 5/5] END max_depth=6, min_samples_leaf=2, min_samples_split=2, n_estimators=10;, score=0.872 total time=   0.0s
+[CV 1/5] END max_depth=8, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.856 total time=   0.6s
+[CV 2/5] END max_depth=8, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.864 total time=   0.6s
+[CV 3/5] END max_depth=8, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.855 total time=   0.6s
+[CV 4/5] END max_depth=8, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.855 total time=   0.6s
+[CV 5/5] END max_depth=8, min_samples_leaf=5, min_samples_split=2, n_estimators=400;, score=0.860 total time=   0.6s
+[CV 1/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.856 total time=   0.0s
+[CV 2/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.868 total time=   0.0s
+[CV 3/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.855 total time=   0.0s
+[CV 4/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.864 total time=   0.0s
+[CV 5/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.855 total time=   0.0s
+[CV 1/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=50;, score=0.873 total time=   0.0s
+[CV 2/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=50;, score=0.855 total time=   0.0s
+[CV 3/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=50;, score=0.855 total time=   0.0s
+[CV 4/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=50;, score=0.860 total time=   0.0s
+[CV 5/5] END max_depth=8, min_samples_leaf=4, min_samples_split=5, n_estimators=50;, score=0.860 total time=   0.0s
+[CV 1/5] END max_depth=5, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.856 total time=   0.2s
+[CV 2/5] END max_depth=5, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.864 total time=   0.2s
+[CV 3/5] END max_depth=5, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.855 total time=   0.2s
+[CV 4/5] END max_depth=5, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.851 total time=   0.2s
+[CV 5/5] END max_depth=5, min_samples_leaf=3, min_samples_split=2, n_estimators=200;, score=0.864 total time=   0.2s
+[CV 1/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=10;, score=0.864 total time=   0.0s
+[CV 2/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=10;, score=0.864 total time=   0.0s
+[CV 3/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=10;, score=0.855 total time=   0.0s
+[CV 4/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=10;, score=0.847 total time=   0.0s
+[CV 5/5] END max_depth=6, min_samples_leaf=5, min_samples_split=2, n_estimators=10;, score=0.868 total time=   0.0s
+[CV 1/5] END max_depth=4, min_samples_leaf=6, min_samples_split=10, n_estimators=10;, score=0.869 total time=   0.0s
+[CV 2/5] END max_depth=4, min_samples_leaf=6, min_samples_split=10, n_estimators=10;, score=0.847 total time=   0.0s
+[CV 3/5] END max_depth=4, min_samples_leaf=6, min_samples_split=10, n_estimators=10;, score=0.851 total time=   0.0s
+[CV 4/5] END max_depth=4, min_samples_leaf=6, min_samples_split=10, n_estimators=10;, score=0.843 total time=   0.0s
+[CV 5/5] END max_depth=4, min_samples_leaf=6, min_samples_split=10, n_estimators=10;, score=0.860 total time=   0.0s
+[CV 1/5] END max_depth=5, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.852 total time=   0.0s
+[CV 2/5] END max_depth=5, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.847 total time=   0.0s
+[CV 3/5] END max_depth=5, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.834 total time=   0.0s
+[CV 4/5] END max_depth=5, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.843 total time=   0.0s
+[CV 5/5] END max_depth=5, min_samples_leaf=4, min_samples_split=5, n_estimators=10;, score=0.855 total time=   0.0s
+[CV 1/5] END max_depth=5, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.860 total time=   0.0s
+[CV 2/5] END max_depth=5, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.864 total time=   0.0s
+[CV 3/5] END max_depth=5, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.855 total time=   0.0s
+[CV 4/5] END max_depth=5, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.847 total time=   0.0s
+[CV 5/5] END max_depth=5, min_samples_leaf=5, min_samples_split=5, n_estimators=10;, score=0.855 total time=   0.0s
+[CV 1/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.860 total time=   0.1s
+[CV 2/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.860 total time=   0.1s
+[CV 3/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.860 total time=   0.1s
+[CV 4/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.855 total time=   0.1s
+[CV 5/5] END max_depth=8, min_samples_leaf=5, min_samples_split=5, n_estimators=100;, score=0.864 total time=   0.1s
+[CV 1/5] END max_depth=6, min_samples_leaf=4, min_samples_split=5, n_estimators=100;, score=0.873 total time=   0.1s
+[CV 2/5] END max_depth=6, min_samples_leaf=4, min_samples_split=5, n_estimators=100;, score=0.864 total time=   0.1s
+[CV 3/5] END max_depth=6, min_samples_leaf=4, min_samples_split=5, n_estimators=100;, score=0.855 total time=   0.1s
+[CV 4/5] END max_depth=6, min_samples_leaf=4, min_samples_split=5, n_estimators=100;, score=0.851 total time=   0.1s
+[CV 5/5] END max_depth=6, min_samples_leaf=4, min_samples_split=5, n_estimators=100;, score=0.860 total time=   0.1s
+RandomizedSearchCV(cv=StratifiedKFold(n_splits=5, random_state=None, shuffle=True),
+                   estimator=RandomForestClassifier(), n_iter=50,
+                   param_distributions={'max_depth': [4, 5, 6, 7, 8, 9, 10],
+                                        'min_samples_leaf': [2, 3, 4, 5, 6],
+                                        'min_samples_split': [2, 5, 10],
+                                        'n_estimators': [10, 50, 100, 200, 300,
+                                                         400]},
+                   scoring='accuracy', verbose=3)
+In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook.
+On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.
+rscv.best_params_
+{'n_estimators': 100,
+ 'min_samples_split': 2,
+ 'min_samples_leaf': 3,
+ 'max_depth': 9}
+rscv.best_score_
+0.8630869094843131
+best_rfc = rscv.best_estimator_
+best_rfc
+RandomForestClassifier(max_depth=9, min_samples_leaf=3)
+In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook.
+On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.
+Evaluate model on test data
+ypred_test = best_rfc.predict(xtest_transformed)
+ypred_test
+array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+       0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+       0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0], dtype=int64)
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+cf = confusion_matrix(ytest, ypred_test)
+sns.heatmap(cf,annot=True,fmt='d')
+<Axes: >
+
+from sklearn.metrics import accuracy_score
+acc = accuracy_score(ytest, ypred_test)
+print(f'Accuracy on testing data is {acc:.4f}')
+Accuracy on testing data is 0.8401
+Insights
+Above model has accuracy of 0.8503 on testing data
+However above data has imbalance data on target
+To deal with imbalanced techniques such as SMOTE (Synthetic Minority Oversampling TEchnique)
+Feature selection can also be avoided in above data and performance should be checked with all features as well
+Question 2
+
+Question 2 : Build a pipeline that includes random forest classifier and a logistic regression classifier , and then voting classifier to combine their predictions. Train the pipeline on iris dataset and evaluate its accuracy
+Answer :
+Load Iris Dataset
+from sklearn.datasets import load_iris
+X,Y = load_iris(return_X_y=True)
+X.shape
+(150, 4)
+Y.shape
+(150,)
+Train Test Split
+from sklearn.model_selection import train_test_split
+xtrain, xtest, ytrain, ytest = train_test_split(X,Y,test_size=0.3,random_state=42)
+xtrain.shape
+(105, 4)
+xtest.shape
+(45, 4)
+Standard Scaling
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+xtrain = scaler.fit_transform(xtrain)
+xtest = scaler.transform(xtest)
+Create pipeline
+from sklearn.pipeline import Pipeline
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import VotingClassifier
+from sklearn.preprocessing import StandardScaler
+
+# Defining Base models
+rfc = RandomForestClassifier(n_estimators=100,max_depth=4)
+lr = LogisticRegression(C=1.0)
+
+# Voting Classifier Pipeline
+vc = VotingClassifier(estimators=[('rfc',rfc),
+                                  ('lr',lr)],
+                                  voting='soft')
+vc.fit(xtrain,ytrain)
+VotingClassifier(estimators=[('rfc', RandomForestClassifier(max_depth=4)),
+                             ('lr', LogisticRegression())],
+                 voting='soft')
+In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook.
+On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.
+Predicting the test results
+ypred_test = vc.predict(xtest)
+ypred_test
+array([1, 0, 2, 1, 1, 0, 1, 2, 1, 1, 2, 0, 0, 0, 0, 1, 2, 1, 1, 2, 0, 2,
+       0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 1, 0, 0, 2, 1, 0, 0, 0, 2, 1, 1, 0,
+       0])
+Evaluating the model on test data
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+cf = confusion_matrix(ytest,ypred_test)
+sns.heatmap(cf,annot=True,fmt='d')
+<Axes: >
+
+# Classification Report 
+from sklearn.metrics import classification_report
+print(classification_report(ytest,ypred_test))
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      1.00      1.00        13
+           2       1.00      1.00      1.00        13
+
+    accuracy                           1.00        45
+   macro avg       1.00      1.00      1.00        45
+weighted avg       1.00      1.00      1.00        45
+
+# Accuracy Score
+from sklearn.metrics import accuracy_score
+acc = accuracy_score(ytest,ypred_test)
+print(f'Accuracy on Final Voting Classifier model is {acc*100:.2f}%')
+Accuracy on Final Voting Classifier model is 100.00%
