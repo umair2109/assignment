@@ -1,190 +1,90 @@
-{
- "cells": [
-  {
-   "cell_type": "markdown",
-   "id": "fcb73fe3-9b31-4552-9dbe-ef8ce552b56f",
-   "metadata": {},
-   "source": [
-    "\n",
-    "Assignment 65: Ensemble Techniques 1 - Utkarsh Gaikwad\n",
-    "\n",
-    "Asignmnent pdf link\n",
-    "\n",
-    "Question 1\n",
-    "\n",
-    "Question 1: What is an ensemble technique in machine learning?\n",
-    "Answer:\n",
-    "An ensemble technique in machine learning is a method that combines the predictions of multiple individual models to improve the accuracy and robustness of the overall prediction. Ensemble methods are often used when a single model may not be sufficient to accurately capture the complexity of the data or when multiple models with different strengths and weaknesses are available.\n",
-    "There are several types of ensemble methods, including:\n",
-    "Bagging: This method involves training multiple instances of the same model on different subsets of the training data and then combining the predictions of each model. Bagging can improve model stability and reduce overfitting.\n",
-    "\n",
-    "Boosting: This method involves iteratively training a sequence of weak models, with each model focusing on the examples that were misclassified by the previous model. The predictions of each model are combined to produce the final prediction.\n",
-    "\n",
-    "Stacking: This method involves training multiple different models and using their predictions as input to a higher-level model that learns how to combine them optimally. Stacking can be used to leverage the strengths of different types of models.\n",
-    "\n",
-    "Ensemble methods have been shown to be very effective in many applications of machine learning, particularly in areas such as computer vision, natural language processing, and speech recognition.\n",
-    "Question 2\n",
-    "\n",
-    "Question 2: Why are ensemble techniques used in machine learning?\n",
-    "Answer :\n",
-    "Ensemble techniques are used in machine learning for several reasons:\n",
-    "Improved prediction accuracy: Ensemble methods can often achieve higher accuracy than individual models by combining the predictions of multiple models. This is because different models may be better suited to different aspects of the data, and combining their predictions can lead to a more accurate overall prediction.\n",
-    "\n",
-    "Robustness: Ensemble methods can help to reduce the impact of noisy or incorrect data by averaging out errors across multiple models. This can improve the robustness of the overall prediction.\n",
-    "\n",
-    "Reduced overfitting: Ensemble methods can help to reduce overfitting by combining the predictions of multiple models trained on different subsets of the data. This can improve generalization performance on new data.\n",
-    "\n",
-    "Improved model stability: Ensemble methods can help to improve the stability of models by reducing the impact of small changes in the training data or model parameters.\n",
-    "\n",
-    "Overall, ensemble methods are a powerful tool in machine learning that can help to improve prediction accuracy, robustness, and stability. They are widely used in many applications, including computer vision, natural language processing, and speech recognition.\n",
-    "Question 3\n",
-    "\n",
-    "Question 3 : What is bagging?\n",
-    "Answer :\n",
-    "Bagging (short for Bootstrap Aggregating) is an ensemble technique in machine learning that involves training multiple instances of the same model on different subsets of the training data and then combining their predictions to make a final prediction.\n",
-    "The basic idea behind bagging is to reduce the variance of a single model by averaging out the predictions of multiple models trained on different subsets of the data. Each model in the ensemble is trained on a randomly sampled subset of the training data, with replacement. This means that some examples may appear multiple times in the same subset, while others may not appear at all. By sampling with replacement, we can create multiple different subsets of the data that are representative of the overall training set.\n",
-    "Once the models have been trained on their respective subsets of the training data, they are used to make predictions on the test data. The final prediction is then obtained by aggregating the predictions of all the models, usually by taking the average.\n",
-    "Bagging can be used with any type of model, including decision trees, neural networks, and support vector machines. It is particularly effective with models that are prone to overfitting, as it can help to reduce the variance of the model and improve its generalization performance.\n",
-    "Question 4\n",
-    "\n",
-    "Question 4 : What is boosting?\n",
-    "Answer :\n",
-    "Boosting is an ensemble technique in machine learning that involves iteratively training a sequence of weak models, with each model focusing on the examples that were misclassified by the previous model. The predictions of each model are then combined to produce the final prediction.\n",
-    "The basic idea behind boosting is to iteratively improve the overall prediction by focusing on the examples that are difficult to classify. The weak models in the ensemble are typically simple models, such as decision trees, that are trained on a subset of the training data. The models are then combined using a weighted sum, where the weights are adjusted at each iteration to give more weight to the models that perform well on the training data.\n",
-    "Boosting can be thought of as a form of adaptive weighting, where the weights of the examples in the training data are adjusted based on their difficulty to classify. Examples that are difficult to classify are given higher weights, while examples that are easy to classify are given lower weights. This allows the weak models to focus on the examples that are most important for improving the overall prediction.\n",
-    "Boosting has been shown to be very effective in many applications of machine learning, particularly in areas such as computer vision, natural language processing, and speech recognition. It is often used with decision trees, but can also be used with other types of models, such as neural networks and support vector machines.\n",
-    "Question 5\n",
-    "\n",
-    "Question 5 : What are the benefits of using ensemble techniques?\n",
-    "Answer :\n",
-    "Ensemble techniques offer several benefits in machine learning:\n",
-    "Improved accuracy: Ensemble techniques can improve the accuracy of predictions by combining the predictions of multiple models. This is because different models may be better suited to different aspects of the data, and combining their predictions can lead to a more accurate overall prediction.\n",
-    "\n",
-    "Reduced overfitting: Ensemble techniques can help to reduce overfitting by combining the predictions of multiple models trained on different subsets of the data. This can improve generalization performance on new data.\n",
-    "\n",
-    "Improved robustness: Ensemble techniques can help to reduce the impact of noisy or incorrect data by averaging out errors across multiple models. This can improve the robustness of the overall prediction.\n",
-    "\n",
-    "Increased stability: Ensemble techniques can help to improve the stability of models by reducing the impact of small changes in the training data or model parameters.\n",
-    "\n",
-    "Can leverage different strengths of models: Ensemble techniques can combine the strengths of different models that are good at different aspects of the data and combine their predictions to get a more accurate overall prediction.\n",
-    "\n",
-    "Overall, ensemble techniques are a powerful tool in machine learning that can improve prediction accuracy, robustness, stability, and generalization performance. They are widely used in many applications, including computer vision, natural language processing, and speech recognition.\n",
-    "Question 6\n",
-    "\n",
-    "Question 6 : Are ensemble techniques always better than individual models?\n",
-    "Answer :\n",
-    "Ensemble techniques are not always better than individual models. While ensemble techniques can improve the accuracy, robustness, and generalization performance of models, there are cases where they may not be effective.\n",
-    "For example, if the individual models in the ensemble are very similar to each other, then the ensemble may not provide much benefit over a single model. Additionally, if the individual models are very complex and overfit the training data, then the ensemble may also overfit the data and not generalize well to new data.\n",
-    "Furthermore, ensemble techniques can be computationally expensive and may require more resources to train and deploy compared to individual models.\n",
-    "Therefore, it is important to carefully evaluate the effectiveness of ensemble techniques in a given application and compare their performance against individual models before deciding to use them. It is also important to consider the computational cost and feasibility of implementing ensemble techniques in the given application.\n",
-    "Question 7\n",
-    "\n",
-    "Question 7 : How is the confidence interval calculated using bootstrap?\n",
-    "Answer :\n",
-    "The confidence interval can be calculated using the bootstrap method in the following way:\n",
-    "Randomly sample the original dataset with replacement to create a new dataset of the same size as the original dataset. This is called a bootstrap sample.\n",
-    "\n",
-    "Compute the statistic of interest, such as the mean or median, on the bootstrap sample.\n",
-    "\n",
-    "Repeat steps 1 and 2 many times, typically several thousand times, to generate a large number of bootstrap samples and their corresponding statistics.\n",
-    "\n",
-    "Calculate the standard error of the statistic using the bootstrap samples. This is an estimate of the variability of the statistic.\n",
-    "\n",
-    "Use the standard error to calculate the confidence interval using the desired level of confidence and a normal distribution or t-distribution, depending on the sample size and assumptions.\n",
-    "\n",
-    "For example, suppose we want to calculate the 95% confidence interval for the mean of a dataset. We can use the bootstrap method to estimate the standard error of the mean and then calculate the confidence interval using a normal distribution. The steps would be as follows:\n",
-    "Randomly sample the original dataset with replacement to create a new dataset of the same size as the original dataset. Repeat this process many times, such as 10,000 times, to create a large number of bootstrap samples.\n",
-    "\n",
-    "Calculate the mean of each bootstrap sample.\n",
-    "\n",
-    "Compute the standard error of the mean using the bootstrap samples. This is typically calculated as the standard deviation of the bootstrap sample means.\n",
-    "\n",
-    "Calculate the lower and upper bounds of the confidence interval using the standard error and a normal distribution. For example, if the standard error is 0.1 and we want a 95% confidence interval, we would use a z-score of 1.96 (the z-score corresponding to the 97.5th percentile of a standard normal distribution) and calculate the confidence interval as: mean +/- zstandard error = mean +/- 1.96*std_error\n",
-    "\n",
-    "The resulting confidence interval would be the range of values from the lower bound to the upper bound.\n",
-    "\n",
-    "Question 8\n",
-    "\n",
-    "Question 8 : How does bootstrap work and What are the steps involved in bootstrap?\n",
-    "Answer :\n",
-    "Bootstrap is a statistical method for estimating the uncertainty of a statistic or model parameter by resampling from the original data. The steps involved in the bootstrap method are as follows:\n",
-    "Collect the original dataset: The first step is to collect the original dataset of size N.\n",
-    "\n",
-    "Sample from the original dataset with replacement: From the original dataset, we randomly sample N observations with replacement to create a new dataset of the same size N as the original dataset. This is called a bootstrap sample.\n",
-    "\n",
-    "Compute the statistic of interest: We compute the statistic of interest, such as the mean, median, variance, or any other parameter we want to estimate, on the bootstrap sample.\n",
-    "\n",
-    "Repeat step 2 and 3 many times: We repeat steps 2 and 3 many times, typically 1,000 or more, to create many bootstrap samples and their corresponding statistics.\n",
-    "\n",
-    "Compute the standard error of the statistic: We compute the standard error of the statistic using the bootstrap samples. This is an estimate of the variability of the statistic.\n",
-    "\n",
-    "Construct the confidence interval: We use the standard error to construct a confidence interval around the estimate of the statistic. For example, we can construct a 95% confidence interval by taking the middle 95% of the bootstrap distribution of the statistic.\n",
-    "\n",
-    "The bootstrap method allows us to estimate the variability of a statistic or parameter without making assumptions about the underlying distribution of the data or the model. It can be used for a wide range of statistical applications, such as hypothesis testing, regression analysis, and machine learning. The bootstrap method is particularly useful when the sample size is small, or the underlying distribution is unknown or nonparametric.\n",
-    "Question 9\n",
-    "\n",
-    "Question 9 : A researcher wants to estimate the mean height of a population of trees. They measure the height of a sample of 50 trees and obtain a mean height of 15 meters and a standard deviation of 2 meters. Use bootstrap to estimate the 95% confidence interval for the population mean height.\n",
-    "Answer :\n",
-    "Below is code in python to calculate 95% interval for above bootstrap\n",
-    "# Given Data \n",
-    "samples = 50\n",
-    "sample_mean = 15\n",
-    "sample_std = 2\n",
-    "confidence_level = 0.95\n",
-    "\n",
-    "# Calculate the t value for desired level of confidence\n",
-    "import scipy.stats as stats\n",
-    "alpha = 1 - confidence_level\n",
-    "dof = samples-1\n",
-    "t_value = stats.t.ppf(1 - alpha/2, dof)\n",
-    "\n",
-    "# calculate the standard error and margin of error\n",
-    "import math\n",
-    "std_error = sample_std / math.sqrt(samples)\n",
-    "margin_of_error = t_value * std_error\n",
-    "\n",
-    "# calculate the confidence interval bounds\n",
-    "lower_bound = sample_mean - margin_of_error\n",
-    "upper_bound = sample_mean + margin_of_error\n",
-    "\n",
-    "# print 95% confidence interval\n",
-    "print(f'Sample mean height for {samples} Trees is {sample_mean} and Sample Standard Deviation is {sample_std}')\n",
-    "print('\\n============================================================================\\n')\n",
-    "print(f'T-Statistic with {confidence_level*100}% condifence interval for dof {dof} : {t_value:.4f}')\n",
-    "print(f'Standard Error : {std_error:.4f}')\n",
-    "print(f'Margin of error : {margin_of_error:.4f}')\n",
-    "print(f'\\nEstimated Population mean with 95% confidence interval is ({lower_bound:.2f} , {upper_bound:.2f})')\n",
-    "Sample mean height for 50 Trees is 15 and Sample Standard Deviation is 2\n",
-    "\n",
-    "============================================================================\n",
-    "\n",
-    "T-Statistic with 95.0% condifence interval for dof 49 : 2.0096\n",
-    "Standard Error : 0.2828\n",
-    "Margin of error : 0.5684\n",
-    "\n",
-    "Estimated Population mean with 95% confidence interval is (14.43 , 15.57)"
-   ]
-  }
- ],
- "metadata": {
-  "kernelspec": {
-   "display_name": "Python 3 (ipykernel)",
-   "language": "python",
-   "name": "python3"
-  },
-  "language_info": {
-   "codemirror_mode": {
-    "name": "ipython",
-    "version": 3
-   },
-   "file_extension": ".py",
-   "mimetype": "text/x-python",
-   "name": "python",
-   "nbconvert_exporter": "python",
-   "pygments_lexer": "ipython3",
-   "version": "3.10.8"
-  }
- },
- "nbformat": 4,
- "nbformat_minor": 5
-}
+
+
+Question 1
+
+Question 1 : How does bagging reduce overfitting in decision trees?
+Answer :
+Bagging, short for bootstrap aggregating, is a machine learning ensemble technique that combines the predictions of multiple models to improve accuracy and reduce overfitting. It works by creating multiple subsets of the original training data by random sampling with replacement, and then training a base model on each subset.
+In the context of decision trees, bagging can help to reduce overfitting in several ways:
+Decreased Variance: By averaging the predictions of multiple decision trees trained on different subsets of the training data, the overall variance of the model can be reduced. This is because the different trees are likely to make different errors on different subsets of the data, and when combined, these errors tend to cancel out.
+
+Increased Robustness: Bagging can help to make the model more robust to outliers and noise in the data. This is because the random subsets of the data are likely to contain different outliers and noisy points, and the overall model is less likely to be affected by any one of them.
+
+Reduced Bias: Bagging can also help to reduce bias in the model. This is because decision trees tend to have high variance and low bias, meaning that they are prone to overfitting to the training data. By averaging the predictions of multiple decision trees, the overall bias of the model can be reduced, leading to better generalization performance on new data.
+
+Overall, bagging is an effective technique for reducing overfitting in decision trees, and is widely used in practice to improve the performance of machine learning models.
+Question 2
+
+Question 2 : What are the advantages and disadvantages of using different types of base learners in bagging?
+Answer :
+In bagging, different types of base learners can be used, such as decision trees, neural networks, or support vector machines. Each type of base learner has its own advantages and disadvantages.
+Type of Base Learner	Advantages	Disadvantages
+Decision Trees	- Easy to interpret and visualize
+- Can handle both numerical and categorical data
+- Can capture complex non-linear relationships
+- Effective in handling missing values and outliers	- Prone to overfitting
+- Can be unstable
+- Biased towards features with many levels or missing values
+- Limited in terms of performance compared to other models
+Neural Networks	- Able to capture highly non-linear relationships
+- Can handle large amounts of data and high-dimensional feature spaces
+- Can learn hierarchical representations of data
+- Have been shown to perform well in many applications	- Computationally expensive to train and tune
+- Prone to overfitting
+- Difficult to interpret and understand the internal workings of the model
+- Requires a large amount of labeled data to train effectively
+Support Vector Machines	- Able to handle high-dimensional feature spaces
+- Can capture complex non-linear relationships using the kernel trick
+- Robust to outliers and noise in the data
+- Have a strong theoretical foundation in optimization and statistical learning theory	- Computationally expensive to train and tune, especially with large datasets
+- Sensitive to the choice of kernel function and parameters
+- May require careful feature selection and preprocessing
+- Can be difficult to interpret and understand the internal workings of the model
+In general, the choice of base learner depends on the specific problem and the characteristics of the data. It is often beneficial to try different types of base learners and compare their performance empirically.
+Question 3
+
+Question 3 : How does the choice of base learner affect the bias-variance tradeoff in bagging?
+Answer :
+The choice of base learner can have a significant impact on the bias-variance tradeoff in bagging. In general, the bias-variance tradeoff refers to the tradeoff between the ability of a model to accurately capture the underlying relationship between the features and the target variable (bias) and the ability of the model to generalize well to new, unseen data (variance).
+Bagging can help reduce the variance of a model by reducing the impact of random fluctuations in the data. By training multiple models on different subsets of the data and averaging their predictions, bagging can produce a more stable and robust model with lower variance.
+The choice of base learner can also affect the bias of the model. For example, decision trees tend to have high variance and low bias, meaning that they can easily overfit the data but may not capture the underlying relationship between the features and the target variable well. On the other hand, linear models such as logistic regression tend to have low variance and high bias, meaning that they may not capture complex non-linear relationships in the data but are less likely to overfit.
+In general, choosing a base learner with higher bias and lower variance, such as linear models or naive Bayes classifiers, can help reduce the overall bias of the bagged model, while choosing a base learner with lower bias and higher variance, such as decision trees or neural networks, can help reduce the overall variance of the bagged model.
+It's important to note that this relationship between bias and variance is not absolute and can vary depending on the specific problem and the characteristics of the data. In practice, it's often useful to experiment with different types of base learners and compare their performance using metrics such as cross-validation or holdout testing.
+Question 4
+
+Question 4 : Can bagging be used for both classification and regression tasks? How does it differ in each case?
+Answer :
+Yes, bagging can be used for both classification and regression tasks. In both cases, bagging is a type of ensemble method that combines multiple base learners to produce a more accurate and robust model.
+Below are differences in tabular format
+Classification	Regression
+Base learners	Produce class labels or probabilities	Produce continuous output values
+Combining predictions	Majority voting or averaging of probabilities	Averaging or weighted averaging
+Final prediction	Class label with most votes or highest average probability	Average of predicted values or weighted average
+Performance metrics	Accuracy, precision, recall, F1 score	Mean squared error, mean absolute error, R-squared
+In both cases, bagging can help reduce overfitting and improve the accuracy and robustness of the final model. However, the choice of base learners and the way their predictions are combined can have a significant impact on the performance of the bagged model. In general, it's important to experiment with different types of base learners and combinations to find the optimal approach for a specific problem.
+Question 5
+
+Question 5 : What is the role of ensemble size in bagging? How many models should be included in the ensemble?
+Answer :
+The ensemble size, or the number of base models included in the bagging ensemble, can have a significant impact on the performance of the final model. In general, increasing the ensemble size can help improve the accuracy and robustness of the model up to a certain point, after which the benefits of adding more models may start to plateau or even decrease.
+The optimal ensemble size may vary depending on the specific problem and the characteristics of the data. In practice, it's often useful to experiment with different ensemble sizes and compare their performance using metrics such as cross-validation or holdout testing.
+Some general guidelines for choosing the ensemble size in bagging include:
+Starting with a small ensemble size (e.g., 10-50 models) and gradually increasing it until the performance plateaus or starts to decrease.
+
+Considering the tradeoff between performance and computational complexity. Larger ensembles require more computational resources and may not be feasible for large datasets or limited computing power.
+
+Ensuring diversity among the base models by using different types of base learners, random subsets of the data, or different hyperparameters.
+
+Using techniques such as early stopping or pruning to prevent overfitting and improve the stability of the ensemble.
+
+Ultimately, the choice of ensemble size should be based on empirical evaluation and a balance between performance, computational complexity, and practical considerations.
+Question 6
+
+Question 6 : Can you provide an example of a real-world application of bagging in machine learning?
+Answer :
+Bagging is a widely used technique in machine learning and has been applied to many real-world problems. Here is one example:
+Example: Fraud Detection in Credit Card Transactions
+Credit card companies need to detect fraudulent transactions to prevent financial losses and maintain customer trust. One approach to this problem is to use machine learning models to classify transactions as either genuine or fraudulent based on various features such as transaction amount, location, and time.
+In this context, bagging can be used to improve the performance and robustness of the classification model. Multiple base classifiers can be trained on different subsets of the data using bagging, and their predictions can be combined using majority voting or averaging to produce a more accurate and reliable prediction.
+For example, a credit card company might use bagging to train 50 decision tree classifiers on randomly selected subsets of the transaction data, with each tree having a maximum depth of 10 and using 10 randomly selected features at each split. The predictions of the base classifiers can then be combined using majority voting to produce the final prediction.
+Bagging can help improve the accuracy and robustness of the fraud detection model by reducing the variance of the individual classifiers and improving their generalization performance. Additionally, bagging can help prevent overfitting and improve the stability of the model, which is important in the context of fraud detection where the data distribution may change over time and new types of fraud may emerge.
