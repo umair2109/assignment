@@ -1,329 +1,592 @@
-{
- "cells": [
-  {
-   "cell_type": "markdown",
-   "id": "fcb73fe3-9b31-4552-9dbe-ef8ce552b56f",
-   "metadata": {},
-   "source": [
-    "\n",
-    "Assignment 6: OOPS - Utkarsh Gaikwad\n",
-    "\n",
-    "Assignment PDF Link\n",
-    "\n",
-    "\n",
-    "Question 1\n",
-    "\n",
-    "Question 1: Explain Class and Object with respect to Object-Oriented Programming. Give a suitable example.\n",
-    "Answer : In object-oriented programming, a class is a blueprint for creating objects (instances of a class). It defines the data and behaviors (methods) that the objects of the class will have.\n",
-    "For example consider a class Triangle , which could have attributes sides a,b,c and methods like perimeter, area.\n",
-    "Each Triangle created will have different sides with unique values of a,b,c . These unique triangles are objects of class\n",
-    "An Object is an instance of class and represents a single entity with its own unique data and behaviours\n",
-    "class Triangle:\n",
-    "\n",
-    "    \"\"\"\n",
-    "    Defining Class Triangle Constructor method 3 sides\n",
-    "    \"\"\"\n",
-    "\n",
-    "    def __init__(self, a,b,c):\n",
-    "        self.a = a\n",
-    "        self.b = b\n",
-    "        self.c = c\n",
-    "\n",
-    "    def isTriangle(self):\n",
-    "        \"\"\"\n",
-    "        for triangle to form sum of any two sides\n",
-    "        should be greater than third this function checks this\n",
-    "        \"\"\"\n",
-    "        if (self.a + self.b)>self.c and (self.b + self.c)>self.a and (self.a + self.c)>self.b:\n",
-    "            x = True\n",
-    "        else:\n",
-    "            x = False\n",
-    "        return x\n",
-    "    \n",
-    "    def perimeter(self):\n",
-    "        \"\"\"\n",
-    "        This function returns perimeter of triangle\n",
-    "        p = a+b+c\n",
-    "        only if sides a,b,c form a triangle\n",
-    "        \"\"\"\n",
-    "        if self.isTriangle()==True:\n",
-    "            p = self.a + self.b + self.c\n",
-    "        else:\n",
-    "            p = None\n",
-    "            print(f'The sides {self.a}, {self.b}, {self.c} do not form a triangle')\n",
-    "        return p\n",
-    "\n",
-    "    def area(self):\n",
-    "        \"\"\"\n",
-    "        This funtion returns area of triangle based on \n",
-    "        Herons formula\n",
-    "        only if sides a,b,c form a triangle\n",
-    "        \"\"\"\n",
-    "        if self.isTriangle()==True:\n",
-    "            s = (self.a+self.b+self.c)/2 #Semi-perimeter calculation\n",
-    "            ar = (s*(s-self.a)*(s-self.b)*(s-self.c))**0.5\n",
-    "        else:\n",
-    "            ar = None\n",
-    "            print(f'The sides {self.a}, {self.b}, {self.c} do not form a triangle')\n",
-    "        return ar\n",
-    "t1 = Triangle(3,4,5)\n",
-    "print(type(t1))\n",
-    "<class '__main__.Triangle'>\n",
-    "print(f'Sides of object t1 of class Triangle is {t1.a}, {t1.b}, {t1.c}')\n",
-    "Sides of object t1 of class Triangle is 3, 4, 5\n",
-    "t1.isTriangle()\n",
-    "True\n",
-    "t1.perimeter()\n",
-    "12\n",
-    "t1.area()\n",
-    "6.0\n",
-    "t2 = Triangle(1,2,3)\n",
-    "print(t2.isTriangle())\n",
-    "False\n",
-    "t2.perimeter()\n",
-    "The sides 1, 2, 3 do not form a triangle\n",
-    "t2.area()\n",
-    "The sides 1, 2, 3 do not form a triangle\n",
-    "\n",
-    "Question 2\n",
-    "\n",
-    "Question 2: Name the four pillars of OOPs.\n",
-    "Answer : 4 pillars of Object Oriented Programming are as below :\n",
-    "Abstraction: This refers to the idea of hiding the implementation details and only showing the relevant information to the user. It allows the user to focus on the objects and their behavior, rather than the underlying code.\n",
-    "\n",
-    "Encapsulation: This is the mechanism of wrapping data and functions within a single unit (object) to protect the data from external access and modification. This helps to maintain the integrity of the data and the object.\n",
-    "\n",
-    "Inheritance: This is a mechanism of creating new classes (child classes) from existing classes (parent classes). The child classes inherit the attributes and behaviors of the parent class, and can also have their own unique attributes and behaviors. This helps to reduce code duplication and promote code reuse.\n",
-    "\n",
-    "Polymorphism: This refers to the ability of objects of different classes to respond to the same method call in different ways. This allows objects to be treated as objects of their parent class, while still retaining their unique behavior. This enables objects to be used interchangeably, reducing code complexity and improving code maintainability.\n",
-    "\n",
-    "These four pillars are essential elements of object-oriented programming and work together to allow for the creation of robust, flexible, and scalable software systems.\n",
-    "\n",
-    "\n",
-    "Question 3\n",
-    "\n",
-    "Question 3 : Explain why the __init__() function is used. Give a suitable example.\n",
-    "Answer : The __init__() function is a special method in Python classes, known as the constructor method.\n",
-    "It is automatically called when an object of the class is created, and is used to initialize the attributes of the object\n",
-    "For Example consider a class 'car' that has attributes 'manufacturer', 'weight' and color\n",
-    "__init__() function can be used to initialize attribute manufacturer, weight and color when car object is created\n",
-    "class car:\n",
-    "    \"\"\"\n",
-    "    Definining a class car with initialized \n",
-    "    Manufactured, weight and color attributes\n",
-    "    \"\"\"\n",
-    "\n",
-    "    def __init__(self, manufacturer, weight, color):\n",
-    "        self.manufacturer = manufacturer\n",
-    "        self.weight = weight\n",
-    "        self.color = color\n",
-    "# Defining a seltos car object and printing each attribute\n",
-    "seltos = car('Kia',1700,'black')\n",
-    "print(seltos.manufacturer)\n",
-    "print(seltos.weight)\n",
-    "print(seltos.color)\n",
-    "Kia\n",
-    "1700\n",
-    "black\n",
-    "\n",
-    "Question 4\n",
-    "\n",
-    "Question 4: Why self is used in OOPs?\n",
-    "Answer : In object-oriented programming (OOP), the self keyword is used as a reference to the instance of the object that is calling the method.\n",
-    "It is used to access the attributes and methods of the object within the class\n",
-    "# Consider above example with car class I added a method in this class called details which uses self\n",
-    "class car:\n",
-    "    \"\"\"\n",
-    "    Definining a class car with initialized \n",
-    "    Manufactured, weight and color attributes\n",
-    "    \"\"\"\n",
-    "\n",
-    "    def __init__(self, manufacturer, weight, color):\n",
-    "        self.manufacturer = manufacturer\n",
-    "        self.weight = weight\n",
-    "        self.color = color\n",
-    "\n",
-    "    def details(self):\n",
-    "        print(f'This car was manufactured by {self.manufacturer}, its weight is {self.weight} and its color is {self.color}')\n",
-    "# Explaining Use of above code with car class \n",
-    "hector = car('Morris Garages',1600,'Glaze Red')\n",
-    "hector.details()\n",
-    "This car was manufactured by Morris Garages, its weight is 1600 and its color is Glaze Red\n",
-    "In above example the 'details()' method uses 'self' to access cars 'manufacturer', 'weight' and 'color'.\n",
-    "Without 'self', method 'details()' is not able to create any attribute and will give error.\n",
-    "\n",
-    "Question 5\n",
-    "\n",
-    "Question 5 : What is inheritance? Give an example for each type of inheritance.\n",
-    "Answer : Inheritance is a mechanism in object-oriented programming (OOP) that allows a new class to be created based on an existing class.\n",
-    "The new class inherits the attributes and behaviors of the existing class, and can also add its own unique attributes and behaviors.\n",
-    "Single Inheritance : When child class is derived from only one parent class. This is called single inheritance\n",
-    "Single Inheritance\n",
-    "\n",
-    "Credits for above image - https://www.scaler.com/topics/python/inheritance-in-python/\n",
-    "\n",
-    "# Single Inheritance Example\n",
-    "class Brands:               #parent_class\n",
-    "    brand_name_1 = \"Amazon\"\n",
-    "    brand_name_2 = \"Ebay\"\n",
-    "    brand_name_3 = \"OLX\"\n",
-    "    \n",
-    "class Products(Brands):       #child_class\n",
-    "    prod_1 = \"Online Ecommerce Store\"\n",
-    "    prod_2 = \"Online Store\"\n",
-    "    prod_3 = \"Online Buy Sell Store\"\n",
-    "    \n",
-    "obj_1 = Products()          #Object_creation\n",
-    "print(obj_1.brand_name_1+\" is an \"+obj_1.prod_1)\n",
-    "print(obj_1.brand_name_2+\" is an \"+obj_1.prod_2)\n",
-    "print(obj_1.brand_name_3+\" is an \"+obj_1.prod_3)\n",
-    "Amazon is an Online Ecommerce Store\n",
-    "Ebay is an Online Store\n",
-    "OLX is an Online Buy Sell Store\n",
-    "Multiple Inheritance: When child class is derived or inherited from more than one parent class. This is called multiple inheritance. In multiple inheritance, we have two parent classes/base classes and one child class that inherits both parent classes properties.\n",
-    "Multiple Inheritance\n",
-    "\n",
-    "#example_of_multiple_inheritance\n",
-    "\n",
-    "class Brands:               #parent_class_1\n",
-    "    brand_name_1 = \"Amazon\"\n",
-    "    brand_name_2 = \"Ebay\"\n",
-    "    brand_name_3 = \"OLX\"\n",
-    "    \n",
-    "class Products:             #parent_class_2\n",
-    "    prod_1 = \"Online Ecommerce Store\"\n",
-    "    prod_2 = \"Online Store\"\n",
-    "    prod_3 = \"Online Buy Sell Store\"\n",
-    "\n",
-    "class Popularity(Brands,Products): #child class created from parent class 1 and parent class 2\n",
-    "    prod_1_popularity = 100\n",
-    "    prod_2_popularity = 70\n",
-    "    prod_3_popularity = 60\n",
-    "    \n",
-    "obj_1 = Popularity()          #Object_creation\n",
-    "print(obj_1.brand_name_1+\" is an \"+obj_1.prod_1 +\" with popularity = \"+str(obj_1.prod_1_popularity))\n",
-    "print(obj_1.brand_name_2+\" is an \"+obj_1.prod_2 +\" with popularity = \"+str(obj_1.prod_2_popularity))\n",
-    "print(obj_1.brand_name_3+\" is an \"+obj_1.prod_3 +\" with popularity = \"+str(obj_1.prod_3_popularity))\n",
-    "Amazon is an Online Ecommerce Store with popularity = 100\n",
-    "Ebay is an Online Store with popularity = 70\n",
-    "OLX is an Online Buy Sell Store with popularity = 60\n",
-    "Multilevel Inheritance: In multilevel inheritance, we have one parent class and child class that is derived or inherited from that parent class. We have a grand-child class that is derived from the child class.\n",
-    "Multi-level Inheritance\n",
-    "\n",
-    "#example_of_multilevel_inheritance\n",
-    "\n",
-    "class Brands:                      #parent_class\n",
-    "    brand_name_1 = \"Amazon\"\n",
-    "    brand_name_2 = \"Ebay\"\n",
-    "    brand_name_3 = \"OLX\"\n",
-    "    \n",
-    "class Products(Brands):            #child_class\n",
-    "    prod_1 = \"Online Ecommerce Store\"\n",
-    "    prod_2 = \"Online Store\"\n",
-    "    prod_3 = \"Online Buy Sell Store\"\n",
-    "\n",
-    "class Popularity(Products):        #grand_child_class\n",
-    "    prod_1_popularity = 100\n",
-    "    prod_2_popularity = 70\n",
-    "    prod_3_popularity = 60\n",
-    "    \n",
-    "    \n",
-    "obj_1 = Popularity()          #Object_creation\n",
-    "print(obj_1.brand_name_1+\" is an \"+obj_1.prod_1+\" popularity of \"+str(obj_1.prod_1_popularity))\n",
-    "print(obj_1.brand_name_2+\" is an \"+obj_1.prod_2+\" popularity of \"+str(obj_1.prod_2_popularity))\n",
-    "print(obj_1.brand_name_3+\" is an \"+obj_1.prod_3+\" popularity of \"+str(obj_1.prod_3_popularity))\n",
-    "Amazon is an Online Ecommerce Store popularity of 100\n",
-    "Ebay is an Online Store popularity of 70\n",
-    "OLX is an Online Buy Sell Store popularity of 60\n",
-    "Hierarchical inheritance: When we derive or inherit more than one child class from one(same) parent class. Then this type of inheritance is called hierarchical inheritance\n",
-    "Hierarchical Inheritance\n",
-    "\n",
-    "#example of Hierarchical inheritence\n",
-    "\n",
-    "class Brands:                      #parent_class\n",
-    "    brand_name_1 = \"Amazon\"\n",
-    "    brand_name_2 = \"Ebay\"\n",
-    "    brand_name_3 = \"OLX\"\n",
-    "    \n",
-    "class Products(Brands):            #child_class 1\n",
-    "    prod_1 = \"Online Ecommerce Store\"\n",
-    "    prod_2 = \"Online Store\"\n",
-    "    prod_3 = \"Online Buy Sell Store\"\n",
-    "\n",
-    "class Popularity(Brands):          #child class 2\n",
-    "    prod_1_popularity = 100\n",
-    "    prod_2_popularity = 70\n",
-    "    prod_3_popularity = 60\n",
-    "\n",
-    "class Value(Brands):               #child class 3\n",
-    "    prod_1_value = \"Excellent Value\"\n",
-    "    prod_2_value = \"Better Value\"\n",
-    "    prod_3_value = \"Good Value\"\n",
-    "    \n",
-    "obj_1 = Products()          #Objects_creation\n",
-    "obj_2 = Popularity()\n",
-    "obj_3 = Value()\n",
-    "print(obj_1.brand_name_1+\" is an \"+obj_1.prod_1+' with popularity of '+str(obj_2.prod_1_popularity)+' and is '+ obj_3.prod_1_value)\n",
-    "print(obj_1.brand_name_2+\" is an \"+obj_1.prod_2+' with popularity of '+str(obj_2.prod_2_popularity)+' and is '+ obj_3.prod_2_value)\n",
-    "print(obj_1.brand_name_3+\" is an \"+obj_1.prod_3+' with popularity of '+str(obj_2.prod_3_popularity)+' and is '+ obj_3.prod_3_value)\n",
-    "Amazon is an Online Ecommerce Store with popularity of 100 and is Excellent Value\n",
-    "Ebay is an Online Store with popularity of 70 and is Better Value\n",
-    "OLX is an Online Buy Sell Store with popularity of 60 and is Good Value\n",
-    "Hybrid Inheritance - Inheritance consisting of multiple types of inheritance is called hybrid inheritance.\n",
-    "Hybrid Inheritance\n",
-    "\n",
-    "# hybrid inheritance \n",
-    " \n",
-    "class School:\n",
-    "    def func1(self):\n",
-    "        print(\"This function is in school.\")\n",
-    " \n",
-    " \n",
-    "class Student1(School):\n",
-    "    def func2(self):\n",
-    "        print(\"This function is in student 1. \")\n",
-    " \n",
-    " \n",
-    "class Student2(School):\n",
-    "    def func3(self):\n",
-    "        print(\"This function is in student 2.\")\n",
-    " \n",
-    " \n",
-    "class Student3(Student1, School):\n",
-    "    def func4(self):\n",
-    "        print(\"This function is in student 3.\")\n",
-    " \n",
-    " \n",
-    "# Driver's code\n",
-    "object = Student3()\n",
-    "object.func1()\n",
-    "object.func2()\n",
-    "object.func4()\n",
-    "This function is in school.\n",
-    "This function is in student 1. \n",
-    "This function is in student 3."
-   ]
-  }
- ],
- "metadata": {
-  "kernelspec": {
-   "display_name": "Python 3 (ipykernel)",
-   "language": "python",
-   "name": "python3"
-  },
-  "language_info": {
-   "codemirror_mode": {
-    "name": "ipython",
-    "version": 3
-   },
-   "file_extension": ".py",
-   "mimetype": "text/x-python",
-   "name": "python",
-   "nbconvert_exporter": "python",
-   "pygments_lexer": "ipython3",
-   "version": "3.10.8"
-  }
- },
- "nbformat": 4,
- "nbformat_minor": 5
-}
+Question 1
+
+Question 1 : What is mathematical formula for a linear SVM ?
+Answer :
+The mathematical formula for a linear Support Vector Machine (SVM) can be expressed as follows:
+Given a training dataset 
+ where 
+ and 
+, the objective of a linear SVM is to find a hyperplane 
+ that separates the two classes with maximum margin, where 
+ is the weight vector perpendicular to the hyperplane and 
+ is the bias term.
+The optimization problem can be formulated as:
+ 
+
+The above optimization problem can be solved using quadratic programming (QP) methods. The dual form of this problem can be derived using the Lagrange duality theory and is given by:
+ 
+
+Here, 
+ are the Lagrange multipliers, and 
+ is a hyperparameter that controls the tradeoff between maximizing the margin and minimizing the classification error.
+Once we obtain the optimal values of 
+, the weight vector 
+ and bias term 
+ can be computed as follows:
+
+where 
+ is any support vector for which 
+.
+
+Question 2
+
+Question 2 : What is objective function of a linear SVM ?
+Answer :
+The objective function of a linear Support Vector Machine (SVM) is to find the optimal hyperplane that separates the two classes in the given dataset with the maximum margin. The margin is defined as the distance between the hyperplane and the closest data point from either of the two classes.
+The objective function of a linear SVM can be formulated as a convex optimization problem with the following goal:
+Minimize: 
+ 
+
+Subject to: 
+, 
+
+Here, 
+ is the weight vector perpendicular to the hyperplane, 
+ is the bias term, 
+ is the 
+th data point, 
+ is the corresponding class label, and 
+ is the number of data points in the training dataset.
+The optimization problem is formulated in such a way that it finds the maximum margin hyperplane that separates the two classes correctly. The optimization problem is solved by finding the Lagrange multipliers 
+, which represent the importance of each data point in the optimization problem. The optimal hyperplane is then determined by the support vectors, which are the data points that have non-zero Lagrange multipliers. The support vectors lie on the margin, and the distance between the hyperplane and the support vectors is the margin.
+In summary, the objective of a linear SVM is to maximize the margin between the hyperplane and the support vectors, subject to the constraint that all data points are correctly classified.
+
+Question 3
+
+Question 3 : What is kernel trick in SVM ?
+Answer :
+The kernel trick is a technique used in Support Vector Machines (SVMs) to implicitly map input data into a higher-dimensional space, without actually computing the mapping explicitly. This allows the SVM to efficiently handle non-linearly separable data by finding a non-linear decision boundary in the higher-dimensional space.
+In a linear SVM, the decision boundary is a hyperplane in the input space. However, for non-linearly separable data, a linear decision boundary may not be able to separate the classes well. In such cases, the kernel trick can be used to map the input data into a higher-dimensional space where the classes are more easily separable.
+The kernel function is used to compute the dot product of two feature vectors in the higher-dimensional space, without actually computing the mapping explicitly. Different types of kernel functions can be used, such as polynomial, radial basis function (RBF), and sigmoid kernels.
+The most commonly used kernel function is the RBF kernel, which is defined as:
+Minimize: 
+ 
+
+Subject to: 
+, 
+
+
+where 
+ and 
+ are the input feature vectors, and 
+ is a hyperparameter that controls the smoothness of the decision boundary.
+
+The RBF kernel has a high value when the feature vectors are close to each other and decreases exponentially as the distance between them increases.
+By using the kernel trick, the SVM can find a non-linear decision boundary in the higher-dimensional space, without explicitly computing the mapping. This allows the SVM to handle complex, non-linearly separable data efficiently.
+In summary, the kernel trick in SVM is a technique to implicitly map input data into a higher-dimensional space using a kernel function, which allows the SVM to handle non-linearly separable data and find a non-linear decision boundary in the higher-dimensional space.
+
+Question 4
+
+Question 4 : What is role of support vectors in SVM Explain with example
+Answer :
+In Support Vector Machines (SVMs), the support vectors are the data points that lie closest to the decision boundary. These points are called support vectors because they "support" the decision boundary by defining its position and orientation in the feature space.
+The role of the support vectors in SVM is crucial because the decision boundary is determined by these points, and all other data points have no effect on it. The support vectors are the ones that define the margin, which is the distance between the decision boundary and the closest data points of each class. The SVM algorithm aims to maximize this margin, while still correctly classifying all data points.
+To illustrate the role of support vectors in SVM, consider the following example. Suppose we have a binary classification problem where the goal is to classify points as either red or blue. The data points are shown in the figure below:
+Support Vectors
+
+A linear SVM is used to find a decision boundary that separates the two classes.
+In this example, the two data points closest to the decision boundary are the support vectors. These are the points that "support" the decision boundary and determine its position and orientation. All other data points have no effect on the decision boundary.
+The margin of the SVM is the distance between the decision boundary and the closest data points of each class. In this example, the margin is shown as the two dashed lines.
+The SVM algorithm aims to maximize this margin, while still correctly classifying all data points. The presence of the support vectors ensures that the decision boundary is robust to small changes in the data, since it is determined only by the points closest to it.
+In summary, the support vectors are the data points that lie closest to the decision boundary in SVM. They define the position and orientation of the decision boundary and determine the margin of the SVM. The presence of the support vectors ensures that the decision boundary is robust to small changes in the data.
+
+Question 5
+
+Question 5 : Illustrate with examples and graphs Hyperplane , Marginal Plane, Soft Margin, Hard Margin in SVM.
+Answer :
+1. Hyperplane
+In SVM, a hyperplane is a decision boundary that separates the data into different classes. In a binary classification problem, a hyperplane is a line that separates the data points of one class from the data points of the other class. In a multiclass classification problem, a hyperplane is a plane or a higher-dimensional hyperplane that separates the data points of each class from the data points of the other classes.
+
+Hyperplane
+
+In this example, the blue and red dots represent two different classes of data points. The hyperplane is a line that separates the blue dots from the red dots. Any new data point that falls on the blue side of the line will be classified as belonging to the blue class, while any new data point that falls on the red side of the line will be classified as belonging to the red class.
+
+2. Marginal Plane
+The marginal plane is the hyperplane that is equidistant from the support vectors on each side. The distance between the marginal plane and the closest support vector is called the margin, and it is maximized in SVM.
+
+3. Hard Margin
+In SVM, the hard margin method is used when the data is linearly separable, meaning that a hyperplane can be found that perfectly separates the data into two classes. The hard margin method tries to find the hyperplane that maximizes the margin while ensuring that all data points are correctly classified.
+
+4. Soft Margin
+In SVM, the soft margin method is used when the data is not linearly separable, meaning that a hyperplane cannot be found that perfectly separates the data into two classes. The soft margin method allows for some misclassification of the data points in order to find a hyperplane that separates the data as well as possible.
+
+Soft Margin vs Hard margin
+
+
+Question 6
+
+Question 6 : SVM Implementation through IRIS dataset
+Load the IRIS dataset from scikit-learn library and split it into training and testing set
+
+Train a linear SVM classifier on training set and predict labels for testing set
+
+Compute accuracy of model on testing set
+
+Plot decision boundaries of the trained model using two of the features
+
+Try different values of regularisation parameter C and see how its performance affects the performance of model
+
+Answer :
+Load the IRIS dataset from scikit-learn library and split it into training and testing set
+# Load IRIS dataset from sklearn
+from sklearn.datasets import load_iris
+dataset = load_iris()
+print(dataset.DESCR)
+.. _iris_dataset:
+
+Iris plants dataset
+--------------------
+
+**Data Set Characteristics:**
+
+    :Number of Instances: 150 (50 in each of three classes)
+    :Number of Attributes: 4 numeric, predictive attributes and the class
+    :Attribute Information:
+        - sepal length in cm
+        - sepal width in cm
+        - petal length in cm
+        - petal width in cm
+        - class:
+                - Iris-Setosa
+                - Iris-Versicolour
+                - Iris-Virginica
+                
+    :Summary Statistics:
+
+    ============== ==== ==== ======= ===== ====================
+                    Min  Max   Mean    SD   Class Correlation
+    ============== ==== ==== ======= ===== ====================
+    sepal length:   4.3  7.9   5.84   0.83    0.7826
+    sepal width:    2.0  4.4   3.05   0.43   -0.4194
+    petal length:   1.0  6.9   3.76   1.76    0.9490  (high!)
+    petal width:    0.1  2.5   1.20   0.76    0.9565  (high!)
+    ============== ==== ==== ======= ===== ====================
+
+    :Missing Attribute Values: None
+    :Class Distribution: 33.3% for each of 3 classes.
+    :Creator: R.A. Fisher
+    :Donor: Michael Marshall (MARSHALL%PLU@io.arc.nasa.gov)
+    :Date: July, 1988
+
+The famous Iris database, first used by Sir R.A. Fisher. The dataset is taken
+from Fisher's paper. Note that it's the same as in R, but not as in the UCI
+Machine Learning Repository, which has two wrong data points.
+
+This is perhaps the best known database to be found in the
+pattern recognition literature.  Fisher's paper is a classic in the field and
+is referenced frequently to this day.  (See Duda & Hart, for example.)  The
+data set contains 3 classes of 50 instances each, where each class refers to a
+type of iris plant.  One class is linearly separable from the other 2; the
+latter are NOT linearly separable from each other.
+
+.. topic:: References
+
+   - Fisher, R.A. "The use of multiple measurements in taxonomic problems"
+     Annual Eugenics, 7, Part II, 179-188 (1936); also in "Contributions to
+     Mathematical Statistics" (John Wiley, NY, 1950).
+   - Duda, R.O., & Hart, P.E. (1973) Pattern Classification and Scene Analysis.
+     (Q327.D83) John Wiley & Sons.  ISBN 0-471-22361-1.  See page 218.
+   - Dasarathy, B.V. (1980) "Nosing Around the Neighborhood: A New System
+     Structure and Classification Rule for Recognition in Partially Exposed
+     Environments".  IEEE Transactions on Pattern Analysis and Machine
+     Intelligence, Vol. PAMI-2, No. 1, 67-71.
+   - Gates, G.W. (1972) "The Reduced Nearest Neighbor Rule".  IEEE Transactions
+     on Information Theory, May 1972, 431-433.
+   - See also: 1988 MLC Proceedings, 54-64.  Cheeseman et al"s AUTOCLASS II
+     conceptual clustering system finds 3 classes in the data.
+   - Many, many more ...
+dataset.keys()
+dict_keys(['data', 'target', 'frame', 'target_names', 'DESCR', 'feature_names', 'filename', 'data_module'])
+import pandas as pd
+X =pd.DataFrame(dataset.data, columns=dataset.feature_names)
+X.head()
+sepal length (cm)	sepal width (cm)	petal length (cm)	petal width (cm)
+0	5.1	3.5	1.4	0.2
+1	4.9	3.0	1.4	0.2
+2	4.7	3.2	1.3	0.2
+3	4.6	3.1	1.5	0.2
+4	5.0	3.6	1.4	0.2
+dataset.target_names
+array(['setosa', 'versicolor', 'virginica'], dtype='<U10')
+Y = pd.DataFrame(dataset.target, columns=['class'])
+Y.head()
+class
+0	0
+1	0
+2	0
+3	0
+4	0
+# Train test split
+from sklearn.model_selection import train_test_split
+xtrain, xtest, ytrain, ytest = train_test_split(X,Y,test_size=0.33,random_state=42)
+xtrain.shape
+(100, 4)
+xtest.shape
+(50, 4)
+Train a linear SVM classifier on training set and predict labels for testing set
+# Train a linear SVM classifier on the training set
+from sklearn.svm import SVC
+svm = SVC(kernel='linear', C=1.0)
+svm.fit(xtrain, ytrain.values.flatten())
+SVC(kernel='linear')
+In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook.
+On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.
+# Predict the labels for the testing set
+y_pred = svm.predict(xtest)
+
+# Compute the accuracy of the model on the testing set
+from sklearn.metrics import accuracy_score
+accuracy = accuracy_score(ytest, y_pred)
+print("Testing Accuracy:", accuracy)
+Testing Accuracy: 1.0
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+cf = confusion_matrix(ytest,y_pred)
+sns.heatmap(cf,annot=True)
+<Axes: >
+
+Plot Decision Boundaries
+# Plot the decision boundaries of the trained model using two of the features
+import seaborn as sns
+import matplotlib.pyplot as plt
+df_train = pd.concat([xtrain,ytrain],axis=1)
+sns.scatterplot(data = df_train, x = 'sepal length (cm)',y='sepal width (cm)',hue='class')
+plt.title('Sepal Length vs Sepal width hueplot')
+plt.show()
+
+# Plot the decision boundaries of the trained model using two of the features
+import seaborn as sns
+import matplotlib.pyplot as plt
+df_train = pd.concat([xtrain,ytrain],axis=1)
+sns.scatterplot(data = df_train, x = 'petal length (cm)',y='petal width (cm)',hue='class')
+plt.title('Petal length vs Petal width hueplot')
+plt.show()
+
+# Pairplot
+sns.pairplot(df_train,hue='class')
+plt.show()
+
+Try different values of regularisation parameter C and see how its performance affects the performance of model
+import numpy as np
+C = np.linspace(0.01,10,20)
+C
+array([ 0.01      ,  0.53578947,  1.06157895,  1.58736842,  2.11315789,
+        2.63894737,  3.16473684,  3.69052632,  4.21631579,  4.74210526,
+        5.26789474,  5.79368421,  6.31947368,  6.84526316,  7.37105263,
+        7.89684211,  8.42263158,  8.94842105,  9.47421053, 10.        ])
+from sklearn.metrics import classification_report
+acc = []
+for i in C:
+    model = SVC(kernel='linear', C=i)
+    model.fit(xtrain,ytrain.values.flatten())
+    ytest_pred = model.predict(xtest)
+    acc.append(accuracy_score(ytest,ytest_pred))
+    print(f'C Value : {i}\n')
+    print(classification_report(ytest,ytest_pred))
+    print('\n======================================================================\n')
+C Value : 0.01
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      1.00      1.00        15
+           2       1.00      1.00      1.00        16
+
+    accuracy                           1.00        50
+   macro avg       1.00      1.00      1.00        50
+weighted avg       1.00      1.00      1.00        50
+
+
+======================================================================
+
+C Value : 0.5357894736842106
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      1.00      1.00        15
+           2       1.00      1.00      1.00        16
+
+    accuracy                           1.00        50
+   macro avg       1.00      1.00      1.00        50
+weighted avg       1.00      1.00      1.00        50
+
+
+======================================================================
+
+C Value : 1.0615789473684212
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      1.00      1.00        15
+           2       1.00      1.00      1.00        16
+
+    accuracy                           1.00        50
+   macro avg       1.00      1.00      1.00        50
+weighted avg       1.00      1.00      1.00        50
+
+
+======================================================================
+
+C Value : 1.5873684210526318
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      1.00      1.00        15
+           2       1.00      1.00      1.00        16
+
+    accuracy                           1.00        50
+   macro avg       1.00      1.00      1.00        50
+weighted avg       1.00      1.00      1.00        50
+
+
+======================================================================
+
+C Value : 2.113157894736842
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      1.00      1.00        15
+           2       1.00      1.00      1.00        16
+
+    accuracy                           1.00        50
+   macro avg       1.00      1.00      1.00        50
+weighted avg       1.00      1.00      1.00        50
+
+
+======================================================================
+
+C Value : 2.6389473684210527
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      1.00      1.00        15
+           2       1.00      1.00      1.00        16
+
+    accuracy                           1.00        50
+   macro avg       1.00      1.00      1.00        50
+weighted avg       1.00      1.00      1.00        50
+
+
+======================================================================
+
+C Value : 3.1647368421052633
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      1.00      1.00        15
+           2       1.00      1.00      1.00        16
+
+    accuracy                           1.00        50
+   macro avg       1.00      1.00      1.00        50
+weighted avg       1.00      1.00      1.00        50
+
+
+======================================================================
+
+C Value : 3.690526315789474
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      1.00      1.00        15
+           2       1.00      1.00      1.00        16
+
+    accuracy                           1.00        50
+   macro avg       1.00      1.00      1.00        50
+weighted avg       1.00      1.00      1.00        50
+
+
+======================================================================
+
+C Value : 4.2163157894736845
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      1.00      1.00        15
+           2       1.00      1.00      1.00        16
+
+    accuracy                           1.00        50
+   macro avg       1.00      1.00      1.00        50
+weighted avg       1.00      1.00      1.00        50
+
+
+======================================================================
+
+C Value : 4.742105263157895
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      0.93      0.97        15
+           2       0.94      1.00      0.97        16
+
+    accuracy                           0.98        50
+   macro avg       0.98      0.98      0.98        50
+weighted avg       0.98      0.98      0.98        50
+
+
+======================================================================
+
+C Value : 5.267894736842106
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      0.93      0.97        15
+           2       0.94      1.00      0.97        16
+
+    accuracy                           0.98        50
+   macro avg       0.98      0.98      0.98        50
+weighted avg       0.98      0.98      0.98        50
+
+
+======================================================================
+
+C Value : 5.793684210526316
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      0.93      0.97        15
+           2       0.94      1.00      0.97        16
+
+    accuracy                           0.98        50
+   macro avg       0.98      0.98      0.98        50
+weighted avg       0.98      0.98      0.98        50
+
+
+======================================================================
+
+C Value : 6.319473684210527
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      0.93      0.97        15
+           2       0.94      1.00      0.97        16
+
+    accuracy                           0.98        50
+   macro avg       0.98      0.98      0.98        50
+weighted avg       0.98      0.98      0.98        50
+
+
+======================================================================
+
+C Value : 6.845263157894737
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      0.93      0.97        15
+           2       0.94      1.00      0.97        16
+
+    accuracy                           0.98        50
+   macro avg       0.98      0.98      0.98        50
+weighted avg       0.98      0.98      0.98        50
+
+
+======================================================================
+
+C Value : 7.371052631578948
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      0.93      0.97        15
+           2       0.94      1.00      0.97        16
+
+    accuracy                           0.98        50
+   macro avg       0.98      0.98      0.98        50
+weighted avg       0.98      0.98      0.98        50
+
+
+======================================================================
+
+C Value : 7.8968421052631586
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      0.93      0.97        15
+           2       0.94      1.00      0.97        16
+
+    accuracy                           0.98        50
+   macro avg       0.98      0.98      0.98        50
+weighted avg       0.98      0.98      0.98        50
+
+
+======================================================================
+
+C Value : 8.42263157894737
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      1.00      1.00        15
+           2       1.00      1.00      1.00        16
+
+    accuracy                           1.00        50
+   macro avg       1.00      1.00      1.00        50
+weighted avg       1.00      1.00      1.00        50
+
+
+======================================================================
+
+C Value : 8.948421052631579
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      1.00      1.00        15
+           2       1.00      1.00      1.00        16
+
+    accuracy                           1.00        50
+   macro avg       1.00      1.00      1.00        50
+weighted avg       1.00      1.00      1.00        50
+
+
+======================================================================
+
+C Value : 9.47421052631579
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      1.00      1.00        15
+           2       1.00      1.00      1.00        16
+
+    accuracy                           1.00        50
+   macro avg       1.00      1.00      1.00        50
+weighted avg       1.00      1.00      1.00        50
+
+
+======================================================================
+
+C Value : 10.0
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        19
+           1       1.00      1.00      1.00        15
+           2       1.00      1.00      1.00        16
+
+    accuracy                           1.00        50
+   macro avg       1.00      1.00      1.00        50
+weighted avg       1.00      1.00      1.00        50
+
+
+======================================================================
+
+import matplotlib.pyplot as plt
+plt.plot(C, acc)
+plt.xlabel('C value')
+plt.ylabel('Testing Accuracy')
+plt.title('Accuracies for different values of C')
+plt.show()
